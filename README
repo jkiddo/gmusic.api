@@ -1,0 +1,1 @@
+So this is a port (Simon Weber's Python client) of a port (Taylor Finnel's  .NET client) written in Java. Currently, I'm not quite sure it is as feature complete as the two previously mentioned clients but the features implemeted works :)
