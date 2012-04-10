@@ -12,13 +12,13 @@ package gmusic.api.model;
 
 public class Song
 {
-	private String albumart;
 	private String genre;
 	private int beatsPerMinute;
 	private String albumArtistNorm;
 	private String artistNorm;
 	private String album;
 	private double lastPlayed;
+	private String metajamId;
 	private int type;
 	private int disc;
 	private String id;
@@ -26,6 +26,7 @@ public class Song
 	private String title;
 	private String albumArtist;
 	private int totalTracks;
+	private boolean subjectToCuration;
 	private String name;
 	private int totalDiscs;
 	private int year;
@@ -34,7 +35,7 @@ public class Song
 	private String albumNorm;
 	private int track;
 	private long durationMillis;
-	private String albumArt;
+	private String albumArtUrl;
 	private boolean deleted;
 	private String url;
 	private float creationDate;
@@ -42,17 +43,39 @@ public class Song
 	private int rating;
 	private String comment;
 
-	public final void setAlbumArtURL(String value)
+	private long estimatedSize; 
+	
+	public Song()
+	{}
+
+	public final String getMetajamId()
 	{
-		albumart = value;
+		return metajamId;
 	}
-	public final String getAlbumart()
+
+	public final void setMetajamId(String metajamId)
 	{
-		return albumart;
+		this.metajamId = metajamId;
 	}
-	public final void setAlbumart(String albumart)
+
+	public final boolean isSubjectToCuration()
 	{
-		this.albumart = albumart;
+		return subjectToCuration;
+	}
+
+	public final void setSubjectToCuration(boolean subjectToCuration)
+	{
+		this.subjectToCuration = subjectToCuration;
+	}
+
+	public final String getAlbumArtUrl()
+	{
+		return albumArtUrl;
+	}
+
+	public final void setAlbumArtUrl(String albumArtUrl)
+	{
+		this.albumArtUrl = albumArtUrl;
 	}
 	public final String getGenre()
 	{
@@ -221,14 +244,6 @@ public class Song
 	public final void setDurationMillis(long durationMillis)
 	{
 		this.durationMillis = durationMillis;
-	}
-	public final String getAlbumArt()
-	{
-		return albumArt;
-	}
-	public final void setAlbumArt(String albumArt)
-	{
-		this.albumArt = albumArt;
 	}
 	public final boolean isDeleted()
 	{
