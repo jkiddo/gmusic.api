@@ -43,8 +43,6 @@ public class Song
 	private int rating;
 	private String comment;
 
-	private long estimatedSize; 
-	
 	public Song()
 	{}
 

@@ -20,9 +20,7 @@ import org.apache.http.client.ClientProtocolException;
 
 public interface IGoogleHttp
 {
-
 	String dispatchPost(URI address, FormBuilder form) throws ClientProtocolException, IOException, URISyntaxException;
-
+	String dispatchPost(URI address, String json) throws ClientProtocolException, IOException, URISyntaxException;
 	String dispatchGet(URI address) throws URISyntaxException, ClientProtocolException, IOException;
-
 }

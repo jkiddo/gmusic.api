@@ -18,6 +18,7 @@ import java.util.Map;
 public class FormBuilder
 {
 	private final String boundary = "----------" + String.format("%x", new Date().getTime());
+	private String contentType = "multipart/form-data; boundary=" + boundary;
 
 	private final ByteArrayOutputStream outputStream;
 
@@ -30,7 +31,7 @@ public class FormBuilder
 
 	public final String getContentType()
 	{
-		return "multipart/form-data; boundary=" + boundary;
+		return contentType;
 	}
 
 	public FormBuilder()
@@ -51,7 +52,8 @@ public class FormBuilder
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(String.format("\r\n--%1$s\r\n", boundary));
-		sb.append(String.format("Content-Disposition: form-data; name=\"%1$s\";\r\n\r\n%2$s", key, value));
+		sb.append("Content-Disposition: form-data;");
+		sb.append(String.format("name=\"%1$s\";\r\n\r\n%2$s", key, value));
 
 		outputStream.write(sb.toString().getBytes());
 	}

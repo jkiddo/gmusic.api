@@ -31,6 +31,7 @@ import org.apache.http.client.params.CookiePolicy;
 import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.cookie.Cookie;
 import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
@@ -46,10 +47,16 @@ public class GoogleHttp implements IGoogleHttp
 	private final HttpClient httpClient;
 	private final HttpContext localContext;
 	private final CookieStore cookieStore;
+	private final String deviceId;
 	private boolean isStartup = true;
 	private String authroizationToken = null;
 
 	public GoogleHttp()
+	{
+		this(null);
+	}
+
+	public GoogleHttp(String androidDeviceId)
 	{
 		HttpParams http = new BasicHttpParams();
 		http.removeParameter("User-Agent");
@@ -58,6 +65,7 @@ public class GoogleHttp implements IGoogleHttp
 		cookieStore = new BasicCookieStore();
 		localContext = new BasicHttpContext();
 		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
+		deviceId = androidDeviceId;
 	}
 
 	private HttpResponse execute(URI uri, HttpRequestBase request) throws ClientProtocolException, IOException, URISyntaxException
@@ -121,10 +129,13 @@ public class GoogleHttp implements IGoogleHttp
 		{
 			request.addHeader("Authorization", String.format("GoogleLogin auth=%1$s", authroizationToken));
 		}
+		if((address.toString().startsWith("https://android.clients.google.com/music/mplay")) && deviceId != null)
+		{
+			request.addHeader("X-Device-ID", deviceId);
+		}
 
 		return request;
 	}
-
 	private String getCookieValue(String cookieName)
 	{
 		for(Cookie cookie : cookieStore.getCookies())
@@ -135,5 +146,20 @@ public class GoogleHttp implements IGoogleHttp
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public String dispatchPost(URI address, String json) throws ParseException, ClientProtocolException, IOException, URISyntaxException
+	{
+		HttpPost request = new HttpPost();
+		request.setEntity(new StringEntity(json));
+		request.setHeader("Content-Type", "application/json");
+
+		String response = EntityUtils.toString(execute(address, request).getEntity());
+		if(!isStartup)
+		{
+			return response;
+		}
+		return setupAuthentication(response);
 	}
 }
