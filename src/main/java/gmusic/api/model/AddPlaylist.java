@@ -15,7 +15,7 @@ public class AddPlaylist
 	private String id;
 	private String title;
 	private boolean success;
-	
+
 	public final String getId()
 	{
 		return id;

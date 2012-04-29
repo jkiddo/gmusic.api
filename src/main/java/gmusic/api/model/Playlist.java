@@ -21,7 +21,7 @@ public class Playlist
 	private boolean differentialUpdate;
 	private Collection<Song> playlist;
 	private boolean continuation;
-	
+
 	public String getTitle()
 	{
 		return title;

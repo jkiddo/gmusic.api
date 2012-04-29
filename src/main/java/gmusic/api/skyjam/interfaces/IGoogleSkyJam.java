@@ -1,20 +1,20 @@
 package gmusic.api.skyjam.interfaces;
 
-import gmusic.api.skyjam.model.TrackFeed;
+import gmusic.api.interfaces.IGoogleMusicAPI;
 import gmusic.api.skyjam.model.Playlists;
 import gmusic.api.skyjam.model.Track;
+import gmusic.api.skyjam.model.TrackFeed;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
 
 import org.apache.http.client.ClientProtocolException;
 
-public interface IGoogleSkyJam
+public interface IGoogleSkyJam extends IGoogleMusicAPI
 {
-	void login(String email, String password) throws ClientProtocolException, IOException, URISyntaxException;
-	
 	Collection<Track> getAllTracks() throws ClientProtocolException, IOException, URISyntaxException;
 
 	Collection<File> downloadTracks(Collection<Track> tracks) throws URISyntaxException, ClientProtocolException, IOException;
@@ -24,4 +24,6 @@ public interface IGoogleSkyJam
 	Playlists getAllSkyJamPlaylists() throws ClientProtocolException, IOException, URISyntaxException;
 
 	TrackFeed getSkyJamPlaylist(String plID) throws ClientProtocolException, IOException, URISyntaxException;
+
+	URI getTrackURL(Track track) throws URISyntaxException, ClientProtocolException, IOException;
 }

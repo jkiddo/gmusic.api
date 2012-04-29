@@ -1,7 +1,6 @@
 package gmusic.api.impl;
 
 import gmusic.api.comm.JSON;
-import gmusic.api.model.Song;
 import gmusic.api.skyjam.interfaces.IGoogleSkyJam;
 import gmusic.api.skyjam.model.Playlists;
 import gmusic.api.skyjam.model.Track;
@@ -20,10 +19,8 @@ import com.google.common.base.Strings;
 
 public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 {
-	public GoogleSkyJamAPI(String androidDeviceId)
-	{
-		super(androidDeviceId);
-	}
+	public GoogleSkyJamAPI()
+	{}
 
 	@Override
 	public Collection<Track> getAllTracks() throws ClientProtocolException, IOException, URISyntaxException
@@ -50,20 +47,6 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 	}
 
 	@Override
-	public Playlists getAllSkyJamPlaylists() throws ClientProtocolException, IOException, URISyntaxException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public TrackFeed getSkyJamPlaylist(String plID) throws ClientProtocolException, IOException, URISyntaxException
-	{
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public Collection<File> downloadTracks(Collection<Track> tracks) throws URISyntaxException, ClientProtocolException, IOException
 	{
 		Collection<File> files = new ArrayList<File>();
@@ -75,12 +58,15 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 	}
 
 	@Override
+	public URI getTrackURL(Track track) throws URISyntaxException, ClientProtocolException, IOException
+	{
+		return getTuneURL(track);
+	}
+
+	@Override
 	public File downloadTrack(Track track) throws URISyntaxException, ClientProtocolException, IOException
 	{
-		Song s = new Song();
-		s.setName(track.getTitle());
-		s.setId(track.getId());
-		return downloadSong(s);
+		return downloadTune(track);
 
 		// if(androidDeviceId == null)
 		// {
@@ -90,5 +76,19 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 		// new NameValuePair("key", "value")
 		// });
 		// client.dispatchGet(new URI("https://android.clients.google.com/music/mplay?" + track.getId()));
+	}
+
+	@Override
+	public Playlists getAllSkyJamPlaylists() throws ClientProtocolException, IOException, URISyntaxException
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public TrackFeed getSkyJamPlaylist(String plID) throws ClientProtocolException, IOException, URISyntaxException
+	{
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

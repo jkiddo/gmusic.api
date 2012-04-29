@@ -47,16 +47,10 @@ public class GoogleHttp implements IGoogleHttp
 	private final HttpClient httpClient;
 	private final HttpContext localContext;
 	private final CookieStore cookieStore;
-	private final String deviceId;
 	private boolean isStartup = true;
 	private String authroizationToken = null;
 
 	public GoogleHttp()
-	{
-		this(null);
-	}
-
-	public GoogleHttp(String androidDeviceId)
 	{
 		HttpParams http = new BasicHttpParams();
 		http.removeParameter("User-Agent");
@@ -65,7 +59,6 @@ public class GoogleHttp implements IGoogleHttp
 		cookieStore = new BasicCookieStore();
 		localContext = new BasicHttpContext();
 		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
-		deviceId = androidDeviceId;
 	}
 
 	private HttpResponse execute(URI uri, HttpRequestBase request) throws ClientProtocolException, IOException, URISyntaxException
@@ -73,6 +66,7 @@ public class GoogleHttp implements IGoogleHttp
 		HttpResponse response = httpClient.execute(adjustAddress(uri, request), localContext);
 		if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
 		{
+			EntityUtils.toString(response.getEntity());
 			throw new IllegalStateException("Statuscode " + response.getStatusLine().getStatusCode() + " not supported");
 		}
 		return response;
@@ -129,10 +123,10 @@ public class GoogleHttp implements IGoogleHttp
 		{
 			request.addHeader("Authorization", String.format("GoogleLogin auth=%1$s", authroizationToken));
 		}
-		if((address.toString().startsWith("https://android.clients.google.com/music/mplay")) && deviceId != null)
-		{
-			request.addHeader("X-Device-ID", deviceId);
-		}
+		// if((address.toString().startsWith("https://android.clients.google.com/music/mplay")) && deviceId != null)
+		// {
+		// request.addHeader("X-Device-ID", deviceId);
+		// }
 
 		return request;
 	}

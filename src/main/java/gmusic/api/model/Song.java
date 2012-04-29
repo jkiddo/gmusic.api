@@ -10,38 +10,26 @@
  ******************************************************************************/
 package gmusic.api.model;
 
-public class Song
+import gmusic.model.Tune;
+
+public class Song extends Tune
 {
-	private String genre;
-	private int beatsPerMinute;
-	private String albumArtistNorm;
-	private String artistNorm;
-	private String album;
-	private double lastPlayed;
-	private String metajamId;
-	private int type;
-	private int disc;
-	private String id;
-	private String composer;
-	private String title;
-	private String albumArtist;
 	private int totalTracks;
 	private boolean subjectToCuration;
 	private String name;
 	private int totalDiscs;
-	private int year;
 	private String titleNorm;
-	private String artist;
 	private String albumNorm;
 	private int track;
-	private long durationMillis;
 	private String albumArtUrl;
-	private boolean deleted;
 	private String url;
 	private float creationDate;
-	private int playcount;
-	private int rating;
-	private String comment;
+	private String albumArtistNorm;
+	private String artistNorm;
+	private double lastPlayed;
+	private String metajamId;
+	private int type;
+	private int disc;
 
 	public Song()
 	{}
@@ -75,18 +63,12 @@ public class Song
 	{
 		this.albumArtUrl = albumArtUrl;
 	}
-	public final String getGenre()
-	{
-		return genre;
-	}
+
 	public final void setGenre(String genre)
 	{
 		this.genre = genre;
 	}
-	public final int getBeatsPerMinute()
-	{
-		return beatsPerMinute;
-	}
+
 	public final void setBeatsPerMinute(int beatsPerMinute)
 	{
 		this.beatsPerMinute = beatsPerMinute;
@@ -107,10 +89,7 @@ public class Song
 	{
 		this.artistNorm = artistNorm;
 	}
-	public final String getAlbum()
-	{
-		return album;
-	}
+
 	public final void setAlbum(String album)
 	{
 		this.album = album;
@@ -139,34 +118,22 @@ public class Song
 	{
 		this.disc = disc;
 	}
-	public final String getId()
-	{
-		return id;
-	}
+
 	public final void setId(String id)
 	{
 		this.id = id;
 	}
-	public final String getComposer()
-	{
-		return composer;
-	}
+
 	public final void setComposer(String composer)
 	{
 		this.composer = composer;
 	}
-	public final String getTitle()
-	{
-		return title;
-	}
+
 	public final void setTitle(String title)
 	{
 		this.title = title;
 	}
-	public final String getAlbumArtist()
-	{
-		return albumArtist;
-	}
+
 	public final void setAlbumArtist(String albumArtist)
 	{
 		this.albumArtist = albumArtist;
@@ -195,10 +162,6 @@ public class Song
 	{
 		this.totalDiscs = totalDiscs;
 	}
-	public final int getYear()
-	{
-		return year;
-	}
 	public final void setYear(int year)
 	{
 		this.year = year;
@@ -210,10 +173,6 @@ public class Song
 	public final void setTitleNorm(String titleNorm)
 	{
 		this.titleNorm = titleNorm;
-	}
-	public final String getArtist()
-	{
-		return artist;
 	}
 	public final void setArtist(String artist)
 	{
@@ -235,17 +194,9 @@ public class Song
 	{
 		this.track = track;
 	}
-	public final long getDurationMillis()
-	{
-		return durationMillis;
-	}
 	public final void setDurationMillis(long durationMillis)
 	{
 		this.durationMillis = durationMillis;
-	}
-	public final boolean isDeleted()
-	{
-		return deleted;
 	}
 	public final void setDeleted(boolean deleted)
 	{
@@ -269,23 +220,15 @@ public class Song
 	}
 	public final int getPlaycount()
 	{
-		return playcount;
+		return playCount;
 	}
 	public final void setPlaycount(int playcount)
 	{
-		this.playcount = playcount;
+		this.playCount = playcount;
 	}
-	public final int getRating()
-	{
-		return rating;
-	}
-	public final void setRating(int rating)
+	public final void setRating(String rating)
 	{
 		this.rating = rating;
-	}
-	public final String getComment()
-	{
-		return comment;
 	}
 	public final void setComment(String comment)
 	{

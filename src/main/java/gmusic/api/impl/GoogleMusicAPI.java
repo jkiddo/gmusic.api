@@ -21,13 +21,13 @@ import gmusic.api.model.Playlist;
 import gmusic.api.model.Playlists;
 import gmusic.api.model.Song;
 import gmusic.api.model.SongUrl;
+import gmusic.model.Tune;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -41,18 +41,10 @@ import com.google.common.base.Strings;
 public class GoogleMusicAPI implements IGoogleMusicAPI
 {
 	protected final IGoogleHttp client;
-	protected final String androidDeviceId;
 
 	public GoogleMusicAPI()
 	{
-		androidDeviceId = null;
 		client = new GoogleHttp();
-	}
-
-	public GoogleMusicAPI(String androidDeviceId)
-	{
-		this.androidDeviceId = androidDeviceId;
-		client = new GoogleHttp(androidDeviceId);
 	}
 
 	@Override
@@ -101,16 +93,15 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		return JSON.Deserialize(getPlaylistAssist("{\"id\":\"" + plID + "\"}"), Playlist.class);
 	}
 
-	@Override
-	public final SongUrl getSongURL(String id) throws URISyntaxException, ClientProtocolException, IOException
+	protected final URI getTuneURL(Tune tune) throws URISyntaxException, ClientProtocolException, IOException
 	{
-		return JSON.Deserialize(client.dispatchGet(new URI(String.format("https://play.google.com/music/play?u=0&songid=%1$s&pt=e", id))), SongUrl.class);
+		return new URI(JSON.Deserialize(client.dispatchGet(new URI(String.format("https://play.google.com/music/play?u=0&songid=%1$s&pt=e", tune.getId()))), SongUrl.class).getUrl());
 	}
 
 	@Override
-	public SongUrl getSongURL(Song song) throws URISyntaxException, ClientProtocolException, IOException
+	public URI getSongURL(Song song) throws URISyntaxException, ClientProtocolException, IOException
 	{
-		return getSongURL(song.getId());
+		return getTuneURL(song);
 	}
 
 	@Override
@@ -173,8 +164,13 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 	@Override
 	public File downloadSong(Song song) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
 	{
-		File file = new File(song.getName());
-		FileUtils.copyURLToFile(new URL(getSongURL(song).getUrl()), file);
+		return downloadTune(song);
+	}
+
+	protected File downloadTune(Tune tune) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
+	{
+		File file = new File(tune.getTitle());
+		FileUtils.copyURLToFile(getTuneURL(tune).toURL(), file);
 		return file;
 	}
 }
