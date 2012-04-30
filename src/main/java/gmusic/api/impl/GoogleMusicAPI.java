@@ -35,6 +35,11 @@ import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.http.client.ClientProtocolException;
+import org.jaudiotagger.audio.AudioFile;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.id3.ID3v24Tag;
 
 import com.google.common.base.Strings;
 
@@ -169,8 +174,35 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 
 	protected File downloadTune(Tune tune) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
 	{
-		File file = new File(tune.getTitle());
-		FileUtils.copyURLToFile(getTuneURL(tune).toURL(), file);
+		File file = new File(tune.getId() + ".mp3");
+		if(!file.exists())
+		{
+			FileUtils.copyURLToFile(getTuneURL(tune).toURL(), file);
+
+			populateFileWithTuneTags(file, tune);
+		}
 		return file;
+	}
+
+	private void populateFileWithTuneTags(File file, Tune tune) throws IOException
+	{
+		try
+		{
+			AudioFile f = AudioFileIO.read(file);
+			Tag tag = f.getTag();
+			if(tag == null)
+			{
+				tag = new ID3v24Tag();
+			}
+			tag.setField(FieldKey.ARTIST, tune.getAlbumArtist());
+			tag.setField(FieldKey.ALBUM, tune.getAlbum());
+			tag.setField(FieldKey.TITLE, tune.getTitle());
+			f.setTag(tag);
+			AudioFileIO.write(f);
+		}
+		catch(Exception e)
+		{
+			throw new IOException(e);
+		}
 	}
 }

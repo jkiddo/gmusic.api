@@ -25,7 +25,7 @@ public class APIexample
 
 		try
 		{
-			skyJam.login("1234@gmail.com", "1234");
+			skyJam.login("1234@gmail.com", "123456");
 		}
 		catch(Exception e)
 		{
@@ -35,7 +35,7 @@ public class APIexample
 		IGoogleMusicAPI api = new GoogleMusicAPI();
 		try
 		{
-			api.login("1234@gmail.com", "1234");
+			api.login("1234@gmail.com", "12456");
 			Playlists playlists = api.getAllPlaylists();
 			for(Playlist list : playlists.getMagicPlaylists())
 			{
