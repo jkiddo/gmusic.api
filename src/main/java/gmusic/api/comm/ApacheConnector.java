@@ -42,20 +42,22 @@ import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Strings;
 
-public class GoogleHttp implements IGoogleHttp
+public class ApacheConnector implements IGoogleHttp
 {
 	private final HttpClient httpClient;
 	private final HttpContext localContext;
 	private final CookieStore cookieStore;
 	private boolean isStartup = true;
-	private String authroizationToken = null;
+	private String authorizationToken = null;
 
-	public GoogleHttp()
+	public ApacheConnector()
 	{
-		HttpParams http = new BasicHttpParams();
-		http.removeParameter("User-Agent");
-		http.setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BEST_MATCH);
-		httpClient = new DefaultHttpClient(http);
+		HttpParams params = new BasicHttpParams();
+		params.removeParameter("User-Agent");
+		params.setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BEST_MATCH);
+//		HttpConnectionParams.setConnectionTimeout(params, 150000);
+//		HttpConnectionParams.setSoTimeout(params, socketTimeoutMillis);
+		httpClient = new DefaultHttpClient(params);
 		cookieStore = new BasicCookieStore();
 		localContext = new BasicHttpContext();
 		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
@@ -106,7 +108,7 @@ public class GoogleHttp implements IGoogleHttp
 		int startIndex = response.indexOf("Auth=") + "Auth=".length();
 		int endIndex = response.indexOf("\n", startIndex);
 
-		authroizationToken = response.substring(startIndex, endIndex).trim();
+		authorizationToken = response.substring(startIndex, endIndex).trim();
 		return dispatchPost(new URI("https://play.google.com/music/listen?hl=en&u=0"), FormBuilder.getEmpty());
 	}
 
@@ -119,9 +121,9 @@ public class GoogleHttp implements IGoogleHttp
 
 		request.setURI(address);
 
-		if(authroizationToken != null)
+		if(authorizationToken != null)
 		{
-			request.addHeader("Authorization", String.format("GoogleLogin auth=%1$s", authroizationToken));
+			request.addHeader("Authorization", String.format("GoogleLogin auth=%1$s", authorizationToken));
 		}
 		// if((address.toString().startsWith("https://android.clients.google.com/music/mplay")) && deviceId != null)
 		// {

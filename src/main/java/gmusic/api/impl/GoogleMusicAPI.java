@@ -11,7 +11,8 @@
 package gmusic.api.impl;
 
 import gmusic.api.comm.FormBuilder;
-import gmusic.api.comm.GoogleHttp;
+import gmusic.api.comm.ApacheConnector;
+import gmusic.api.comm.HttpUrlConnector;
 import gmusic.api.comm.JSON;
 import gmusic.api.interfaces.IGoogleHttp;
 import gmusic.api.interfaces.IGoogleMusicAPI;
@@ -45,11 +46,31 @@ import com.google.common.base.Strings;
 
 public class GoogleMusicAPI implements IGoogleMusicAPI
 {
-	protected final IGoogleHttp client;
+	public static enum CONNECTION_TYPE
+	{
+		APACHE, HTTP_URL;
+	}
+	protected IGoogleHttp client;
 
 	public GoogleMusicAPI()
 	{
-		client = new GoogleHttp();
+		this(CONNECTION_TYPE.APACHE);
+	}
+
+	public GoogleMusicAPI(CONNECTION_TYPE type)
+	{
+		switch(type)
+		{
+			case APACHE:
+				client = new ApacheConnector();
+				break;
+			case HTTP_URL:
+				client = new HttpUrlConnector();
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid CONNECTION_TYPE");
+		}
+
 	}
 
 	@Override
