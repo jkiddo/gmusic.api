@@ -18,7 +18,7 @@ import java.net.URISyntaxException;
 
 import org.apache.http.client.ClientProtocolException;
 
-public interface IGoogleHttp
+public interface IGoogleHttpClient
 {
 	String dispatchPost(URI address, FormBuilder form) throws ClientProtocolException, IOException, URISyntaxException;
 	String dispatchPost(URI address, String json) throws ClientProtocolException, IOException, URISyntaxException;

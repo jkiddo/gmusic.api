@@ -10,7 +10,7 @@
  ******************************************************************************/
 package gmusic.api.comm;
 
-import gmusic.api.interfaces.IGoogleHttp;
+import gmusic.api.interfaces.IGoogleHttpClient;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -42,7 +42,7 @@ import org.apache.http.util.EntityUtils;
 
 import com.google.common.base.Strings;
 
-public class ApacheConnector implements IGoogleHttp
+public class ApacheConnector implements IGoogleHttpClient
 {
 	private final HttpClient httpClient;
 	private final HttpContext localContext;

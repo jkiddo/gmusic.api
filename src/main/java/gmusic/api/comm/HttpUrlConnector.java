@@ -10,7 +10,7 @@
  ******************************************************************************/
 package gmusic.api.comm;
 
-import gmusic.api.interfaces.IGoogleHttp;
+import gmusic.api.interfaces.IGoogleHttpClient;
 
 import java.io.IOException;
 import java.net.CookieHandler;
@@ -25,7 +25,7 @@ import org.apache.commons.io.IOUtils;
 
 import com.google.common.base.Strings;
 
-public class HttpUrlConnector implements IGoogleHttp
+public class HttpUrlConnector implements IGoogleHttpClient
 {
 	private boolean isStartup = true;
 	private String authorizationToken = null;

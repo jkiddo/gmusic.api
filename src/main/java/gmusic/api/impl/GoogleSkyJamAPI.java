@@ -1,6 +1,7 @@
 package gmusic.api.impl;
 
 import gmusic.api.comm.JSON;
+import gmusic.api.interfaces.IGoogleHttpClient;
 import gmusic.api.skyjam.interfaces.IGoogleSkyJam;
 import gmusic.api.skyjam.model.Playlists;
 import gmusic.api.skyjam.model.Track;
@@ -20,7 +21,14 @@ import com.google.common.base.Strings;
 public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 {
 	public GoogleSkyJamAPI()
-	{}
+	{
+		super();
+	}
+
+	public GoogleSkyJamAPI(IGoogleHttpClient httpClient)
+	{
+		super(httpClient);
+	}
 
 	@Override
 	public Collection<Track> getAllTracks() throws ClientProtocolException, IOException, URISyntaxException
