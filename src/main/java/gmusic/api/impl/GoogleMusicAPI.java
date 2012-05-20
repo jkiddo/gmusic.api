@@ -46,15 +46,17 @@ import com.google.common.base.Strings;
 public class GoogleMusicAPI implements IGoogleMusicAPI
 {
 	protected IGoogleHttpClient client;
+	private final File storageDirectory;
 
 	public GoogleMusicAPI()
 	{
-		this(new ApacheConnector());
+		this(new ApacheConnector(), new File("."));
 	}
 	
-	public GoogleMusicAPI(IGoogleHttpClient httpClient)
+	public GoogleMusicAPI(IGoogleHttpClient httpClient, File file)
 	{
 		client = httpClient;
+		storageDirectory = file;
 	}
 
 	@Override
@@ -179,7 +181,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 
 	protected File downloadTune(Tune tune) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
 	{
-		File file = new File(tune.getId() + ".mp3");
+		File file = new File(storageDirectory.getAbsolutePath() + tune.getId() + ".mp3");
 		if(!file.exists())
 		{
 			FileUtils.copyURLToFile(getTuneURL(tune).toURL(), file);

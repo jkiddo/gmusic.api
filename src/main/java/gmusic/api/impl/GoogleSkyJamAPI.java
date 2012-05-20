@@ -25,9 +25,9 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 		super();
 	}
 
-	public GoogleSkyJamAPI(IGoogleHttpClient httpClient)
+	public GoogleSkyJamAPI(IGoogleHttpClient httpClient, File file)
 	{
-		super(httpClient);
+		super(httpClient, file);
 	}
 
 	@Override

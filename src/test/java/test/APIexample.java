@@ -18,6 +18,7 @@ import gmusic.api.model.Playlist;
 import gmusic.api.model.Playlists;
 import gmusic.api.model.Song;
 
+import java.io.File;
 import java.util.Calendar;
 import java.util.Collection;
 
@@ -37,7 +38,7 @@ public class APIexample
 			e.printStackTrace();
 		}
 
-		IGoogleMusicAPI api = new GoogleMusicAPI(new ApacheConnector());
+		IGoogleMusicAPI api = new GoogleMusicAPI(new ApacheConnector(), new File("."));
 		try
 		{
 			api.login("jenskristianvilladsen@gmail.com", "yidxhrioyxapunee");
