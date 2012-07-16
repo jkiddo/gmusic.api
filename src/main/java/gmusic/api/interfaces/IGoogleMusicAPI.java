@@ -10,11 +10,7 @@
  ******************************************************************************/
 package gmusic.api.interfaces;
 
-import gmusic.api.model.AddPlaylist;
-import gmusic.api.model.DeletePlaylist;
-import gmusic.api.model.Playlist;
-import gmusic.api.model.Playlists;
-import gmusic.api.model.Song;
+import gmusic.api.model.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,4 +47,6 @@ public interface IGoogleMusicAPI
 	Collection<File> downloadSongs(Collection<Song> songs) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException, InvalidAttributesException;
 
 	File downloadSong(Song song) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException, InvalidAttributesException;
+
+    QueryResponse search(String query) throws Exception;
 }

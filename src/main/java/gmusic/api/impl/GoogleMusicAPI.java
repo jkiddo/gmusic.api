@@ -15,12 +15,7 @@ import gmusic.api.comm.FormBuilder;
 import gmusic.api.comm.JSON;
 import gmusic.api.interfaces.IGoogleHttpClient;
 import gmusic.api.interfaces.IGoogleMusicAPI;
-import gmusic.api.model.AddPlaylist;
-import gmusic.api.model.DeletePlaylist;
-import gmusic.api.model.Playlist;
-import gmusic.api.model.Playlists;
-import gmusic.api.model.Song;
-import gmusic.api.model.SongUrl;
+import gmusic.api.model.*;
 import gmusic.model.Tune;
 
 import java.io.File;
@@ -179,7 +174,25 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		return downloadTune(song);
 	}
 
-	protected File downloadTune(Tune tune) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
+    @Override
+    public QueryResponse search(String query) throws Exception {
+        if (null == query || query.isEmpty()) {
+            throw new IllegalArgumentException("query is null or empty");
+        }
+
+        Map<String, String> fields = new HashMap<String, String>();
+		fields.put("json", "{\"q\":\"" + query + "\"}");
+
+		FormBuilder form = new FormBuilder();
+		form.addFields(fields);
+		form.close();
+
+		String response = client.dispatchPost(new URI("https://play.google.com/music/services/search"), form);
+
+        return JSON.Deserialize(response, QueryResponse.class);
+    }
+
+    protected File downloadTune(Tune tune) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
 	{
 		File file = new File(storageDirectory.getAbsolutePath() + tune.getId() + ".mp3");
 		if(!file.exists())
