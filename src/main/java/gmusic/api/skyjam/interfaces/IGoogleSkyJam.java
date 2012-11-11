@@ -15,6 +15,10 @@ import org.apache.http.client.ClientProtocolException;
 
 public interface IGoogleSkyJam extends IGoogleMusicAPI
 {
+
+	final String HTTPS_WWW_GOOGLEAPIS_COM_SJ_V1BETA1_TRACKS = "https://www.googleapis.com/sj/v1beta1/tracks";
+	final String HTTPS_WWW_GOOGLEAPIS_COM_SJ_V1BETA1_TRACKFEED = "https://www.googleapis.com/sj/v1beta1/trackfeed";
+
 	Collection<Track> getAllTracks() throws ClientProtocolException, IOException, URISyntaxException;
 
 	Collection<File> downloadTracks(Collection<Track> tracks) throws URISyntaxException, ClientProtocolException, IOException;

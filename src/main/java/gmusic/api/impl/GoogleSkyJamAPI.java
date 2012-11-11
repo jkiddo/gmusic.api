@@ -34,7 +34,7 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 	public Collection<Track> getAllTracks() throws ClientProtocolException, IOException, URISyntaxException
 	{
 		final Collection<Track> chunkedCollection = new ArrayList<Track>();
-		final TrackFeed chunk = JSON.Deserialize(client.dispatchGet(new URI("https://www.googleapis.com/sj/v1beta1/tracks")), TrackFeed.class);
+		final TrackFeed chunk = JSON.Deserialize(client.dispatchGet(new URI(HTTPS_WWW_GOOGLEAPIS_COM_SJ_V1BETA1_TRACKS)), TrackFeed.class);
 		chunkedCollection.addAll(chunk.getData().getItems());
 		chunkedCollection.addAll(getTracks(chunk.getNextPageToken()));
 		return chunkedCollection;
@@ -44,7 +44,7 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 	{
 		Collection<Track> chunkedCollection = new ArrayList<Track>();
 
-		TrackFeed chunk = JSON.Deserialize(client.dispatchPost(new URI("https://www.googleapis.com/sj/v1beta1/trackfeed"), "{\"start-token\":\"" + continuationToken + "\"}"), TrackFeed.class);
+		TrackFeed chunk = JSON.Deserialize(client.dispatchPost(new URI(HTTPS_WWW_GOOGLEAPIS_COM_SJ_V1BETA1_TRACKFEED), "{\"start-token\":\"" + continuationToken + "\"}"), TrackFeed.class);
 		chunkedCollection.addAll(chunk.getData().getItems());
 
 		if(!Strings.isNullOrEmpty(chunk.getNextPageToken()))

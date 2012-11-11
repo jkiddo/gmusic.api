@@ -45,7 +45,7 @@ public class HttpUrlConnector implements IGoogleHttpClient
 		connection.setDoOutput(output);
 		if(authorizationToken != null)
 		{
-			connection.setRequestProperty("Authorization", String.format("GoogleLogin auth=%1$s", authorizationToken));
+			connection.setRequestProperty(GOOGLE_LOGIN_AUTH_KEY, String.format(GOOGLE_LOGIN_AUTH_VALUE, authorizationToken));
 		}
 		return connection;
 	}
@@ -53,15 +53,15 @@ public class HttpUrlConnector implements IGoogleHttpClient
 	@Override
 	public final synchronized String dispatchGet(URI address) throws URISyntaxException, IOException
 	{
-//		HttpURLConnection connection = (HttpURLConnection) adjustAddress(address).toURL().openConnection();
-//		connection.setRequestMethod("GET");
-//		connection.setRequestProperty("Cookie", rawCookie);
-//		if(authorizationToken != null)
-//		{
-//			connection.setRequestProperty("Authorization", String.format("GoogleLogin auth=%1$s", authorizationToken));
-//		}
+		// HttpURLConnection connection = (HttpURLConnection) adjustAddress(address).toURL().openConnection();
+		// connection.setRequestMethod("GET");
+		// connection.setRequestProperty("Cookie", rawCookie);
+		// if(authorizationToken != null)
+		// {
+		// connection.setRequestProperty("Authorization", String.format("GoogleLogin auth=%1$s", authorizationToken));
+		// }
 		HttpURLConnection connection = prepareConnection(address, false, "GET");
-		
+
 		connection.connect();
 		if(connection.getResponseCode() != 200)
 		{
@@ -113,21 +113,15 @@ public class HttpUrlConnector implements IGoogleHttpClient
 	private String setupAuthentication(String response) throws IOException, URISyntaxException
 	{
 		isStartup = false;
-		// Pattern pattern = Pattern.compile("Auth=(?<AUTH>(.*?))$", Pattern.CASE_INSENSITIVE);
-		// String auth = pattern.matcher(EntityUtils.toString(response.getEntity())).group();
-
-		int startIndex = response.indexOf("Auth=") + "Auth=".length();
-		int endIndex = response.indexOf("\n", startIndex);
-
-		authorizationToken = response.substring(startIndex, endIndex).trim();
-		return dispatchPost(new URI("https://play.google.com/music/listen?hl=en&u=0"), FormBuilder.getEmpty());
+		authorizationToken = Util.extractAuthenticationToken(response);
+		return dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_LISTEN), FormBuilder.getEmpty());
 	}
 
 	private URI adjustAddress(URI address) throws MalformedURLException, URISyntaxException
 	{
-		if(address.toString().startsWith("https://play.google.com/music/services/"))
+		if(address.toString().startsWith(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES))
 		{
-			return address = new URI(address.toURL() + String.format("?u=0&xt=%1$s", cookie));
+			return address = new URI(address.toURL() + String.format(COOKIE_FORMAT, cookie));
 		}
 
 		return address;

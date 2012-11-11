@@ -10,12 +10,13 @@
  ******************************************************************************/
 package test;
 
-import gmusic.api.comm.ApacheConnector;
+import gmusic.api.comm.HttpUrlConnector;
 import gmusic.api.impl.GoogleMusicAPI;
 import gmusic.api.impl.GoogleSkyJamAPI;
 import gmusic.api.interfaces.IGoogleMusicAPI;
 import gmusic.api.model.Playlist;
 import gmusic.api.model.Playlists;
+import gmusic.api.model.QueryResponse;
 import gmusic.api.model.Song;
 
 import java.io.File;
@@ -26,29 +27,34 @@ public class APIexample
 {
 	public static void main(String args[])
 	{
+//		"yidxhrioyxapunee"
+		String password = "ffbokkgtojoklqcu";
+		String username = "jenskristianvilladsen@gmail.com";
 		System.out.println(Calendar.getInstance().getTime());
 		GoogleSkyJamAPI skyJam = new GoogleSkyJamAPI();
 
 		try
 		{
-			skyJam.login("jenskristianvilladsen@gmail.com", "yidxhrioyxapunee");
+			skyJam.login(username, password);
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 
-		IGoogleMusicAPI api = new GoogleMusicAPI(new ApacheConnector(), new File("."));
+		IGoogleMusicAPI api = new GoogleMusicAPI(new HttpUrlConnector(), new File("."));
 		try
 		{
-			api.login("jenskristianvilladsen@gmail.com", "yidxhrioyxapunee");
+			api.login(username, password);
+//			QueryResponse response = api.search("Jane");
+//			api.downloadSongs(response.getResults().getSongs());
 			Playlists playlists = api.getAllPlaylists();
 			for(Playlist list : playlists.getMagicPlaylists())
 			{
 				System.out.println("--- " + list.getTitle() + " " + list.getPlaylistId() + " ---");
 				for(Song song : list.getPlaylist())
 				{
-//					System.out.println(song.getName() + " " + song.getArtist());
+					System.out.println(song.getName() + " " + song.getArtist());
 				}
 			}
 
@@ -57,7 +63,7 @@ public class APIexample
 				System.out.println("--- " + list.getTitle() + " " + list.getPlaylistId() + " ---");
 				for(Song song : list.getPlaylist())
 				{
-//					System.out.println(song.getName() + " " + song.getArtist());
+					System.out.println(song.getName() + " " + song.getArtist());
 				}
 			}
 			 Collection<Song> songs = api.getAllSongs();

@@ -55,8 +55,8 @@ public class ApacheConnector implements IGoogleHttpClient
 		HttpParams params = new BasicHttpParams();
 		params.removeParameter("User-Agent");
 		params.setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.BEST_MATCH);
-//		HttpConnectionParams.setConnectionTimeout(params, 150000);
-//		HttpConnectionParams.setSoTimeout(params, socketTimeoutMillis);
+		// HttpConnectionParams.setConnectionTimeout(params, 150000);
+		// HttpConnectionParams.setSoTimeout(params, socketTimeoutMillis);
 		httpClient = new DefaultHttpClient(params);
 		cookieStore = new BasicCookieStore();
 		localContext = new BasicHttpContext();
@@ -102,28 +102,22 @@ public class ApacheConnector implements IGoogleHttpClient
 	private String setupAuthentication(String response) throws ParseException, IOException, URISyntaxException
 	{
 		isStartup = false;
-		// Pattern pattern = Pattern.compile("Auth=(?<AUTH>(.*?))$", Pattern.CASE_INSENSITIVE);
-		// String auth = pattern.matcher(EntityUtils.toString(response.getEntity())).group();
-
-		int startIndex = response.indexOf("Auth=") + "Auth=".length();
-		int endIndex = response.indexOf("\n", startIndex);
-
-		authorizationToken = response.substring(startIndex, endIndex).trim();
-		return dispatchPost(new URI("https://play.google.com/music/listen?hl=en&u=0"), FormBuilder.getEmpty());
+		authorizationToken = Util.extractAuthenticationToken(response);
+		return dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_LISTEN), FormBuilder.getEmpty());
 	}
 
 	private HttpRequestBase adjustAddress(URI address, HttpRequestBase request) throws MalformedURLException, URISyntaxException
 	{
-		if(address.toString().startsWith("https://play.google.com/music/services/"))
+		if(address.toString().startsWith(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES))
 		{
-			address = new URI(address.toURL() + String.format("?u=0&xt=%1$s", getCookieValue("xt")));
+			address = new URI(address.toURL() + String.format(COOKIE_FORMAT, getCookieValue("xt")));
 		}
 
 		request.setURI(address);
 
 		if(authorizationToken != null)
 		{
-			request.addHeader("Authorization", String.format("GoogleLogin auth=%1$s", authorizationToken));
+			request.addHeader(GOOGLE_LOGIN_AUTH_KEY, String.format(GOOGLE_LOGIN_AUTH_VALUE, authorizationToken));
 		}
 		// if((address.toString().startsWith("https://android.clients.google.com/music/mplay")) && deviceId != null)
 		// {

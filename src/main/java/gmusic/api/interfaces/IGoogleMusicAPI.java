@@ -10,6 +10,7 @@
  ******************************************************************************/
 package gmusic.api.interfaces;
 
+import gmusic.api.impl.InvalidCredentialsException;
 import gmusic.api.model.*;
 
 import java.io.File;
@@ -30,7 +31,15 @@ import org.apache.http.client.ClientProtocolException;
  */
 public interface IGoogleMusicAPI
 {
-	void login(String email, String password) throws ClientProtocolException, IOException, URISyntaxException;
+	final String HTTPS_WWW_GOOGLE_COM_ACCOUNTS_CLIENT_LOGIN = "https://www.google.com/accounts/ClientLogin";
+	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_SEARCH = "https://play.google.com/music/services/search";
+	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS = "https://play.google.com/music/services/loadalltracks";
+	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADPLAYLIST = "https://play.google.com/music/services/loadplaylist";
+	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_DELETEPLAYLIST = "https://play.google.com/music/services/deleteplaylist";
+	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_ADDPLAYLIST = "https://play.google.com/music/services/addplaylist";
+	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_PLAY_SONGID = "https://play.google.com/music/play?u=0&songid=%1$s&pt=e";
+
+	void login(String email, String password) throws ClientProtocolException, IOException, URISyntaxException, InvalidCredentialsException;
 
 	Collection<Song> getAllSongs() throws ClientProtocolException, IOException, URISyntaxException;
 
@@ -48,5 +57,7 @@ public interface IGoogleMusicAPI
 
 	File downloadSong(Song song) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException, InvalidAttributesException;
 
-    QueryResponse search(String query) throws Exception;
+	QueryResponse search(String query) throws Exception;
+
+	void uploadSong(File song);
 }

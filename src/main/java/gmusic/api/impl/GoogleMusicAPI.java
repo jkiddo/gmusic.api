@@ -47,7 +47,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 	{
 		this(new ApacheConnector(), new File("."));
 	}
-	
+
 	public GoogleMusicAPI(IGoogleHttpClient httpClient, File file)
 	{
 		client = httpClient;
@@ -55,7 +55,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 	}
 
 	@Override
-	public final void login(String email, String password) throws ClientProtocolException, IOException, URISyntaxException
+	public final void login(String email, String password) throws ClientProtocolException, IOException, URISyntaxException, InvalidCredentialsException
 	{
 		Map<String, String> fields = new HashMap<String, String>();
 		fields.put("service", "sj");
@@ -66,7 +66,14 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		form.addFields(fields);
 		form.close();
 
-		client.dispatchPost(new URI("https://www.google.com/accounts/ClientLogin"), form);
+		try
+		{
+			client.dispatchPost(new URI(HTTPS_WWW_GOOGLE_COM_ACCOUNTS_CLIENT_LOGIN), form);
+		}
+		catch(IllegalStateException ise)
+		{
+			throw new InvalidCredentialsException(ise, "Provided credentials: '" + email + "' and '" + password + "' where insufficient");
+		}
 	}
 
 	@Override
@@ -85,7 +92,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		form.addFields(fields);
 		form.close();
 
-		return JSON.Deserialize(client.dispatchPost(new URI("https://play.google.com/music/services/addplaylist"), form), AddPlaylist.class);
+		return JSON.Deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_ADDPLAYLIST), form), AddPlaylist.class);
 	}
 
 	@Override
@@ -102,7 +109,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 
 	protected final URI getTuneURL(Tune tune) throws URISyntaxException, ClientProtocolException, IOException
 	{
-		return new URI(JSON.Deserialize(client.dispatchGet(new URI(String.format("https://play.google.com/music/play?u=0&songid=%1$s&pt=e", tune.getId()))), SongUrl.class).getUrl());
+		return new URI(JSON.Deserialize(client.dispatchGet(new URI(String.format(HTTPS_PLAY_GOOGLE_COM_MUSIC_PLAY_SONGID, tune.getId()))), SongUrl.class).getUrl());
 	}
 
 	@Override
@@ -121,7 +128,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		form.addFields(fields);
 		form.close();
 
-		return JSON.Deserialize(client.dispatchPost(new URI("https://play.google.com/music/services/deleteplaylist"), form), DeletePlaylist.class);
+		return JSON.Deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_DELETEPLAYLIST), form), DeletePlaylist.class);
 	}
 
 	private final String getPlaylistAssist(String jsonString) throws ClientProtocolException, IOException, URISyntaxException
@@ -133,7 +140,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		builder.addFields(fields);
 		builder.close();
 
-		return client.dispatchPost(new URI("https://play.google.com/music/services/loadplaylist"), builder);
+		return client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADPLAYLIST), builder);
 	}
 
 	private final Collection<Song> getSongs(String continuationToken) throws ClientProtocolException, IOException, URISyntaxException
@@ -147,7 +154,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		form.addFields(fields);
 		form.close();
 
-		Playlist chunk = JSON.Deserialize(client.dispatchPost(new URI("https://play.google.com/music/services/loadalltracks"), form), Playlist.class);
+		Playlist chunk = JSON.Deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS), form), Playlist.class);
 		chunkedCollection.addAll(chunk.getPlaylist());
 
 		if(!Strings.isNullOrEmpty(chunk.getContinuationToken()))
@@ -174,25 +181,27 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		return downloadTune(song);
 	}
 
-    @Override
-    public QueryResponse search(String query) throws Exception {
-        if (null == query || query.isEmpty()) {
-            throw new IllegalArgumentException("query is null or empty");
-        }
+	@Override
+	public QueryResponse search(String query) throws ClientProtocolException, IOException, URISyntaxException
+	{
+		if(Strings.isNullOrEmpty(query))
+		{
+			throw new IllegalArgumentException("query is null or empty");
+		}
 
-        Map<String, String> fields = new HashMap<String, String>();
+		Map<String, String> fields = new HashMap<String, String>();
 		fields.put("json", "{\"q\":\"" + query + "\"}");
 
 		FormBuilder form = new FormBuilder();
 		form.addFields(fields);
 		form.close();
 
-		String response = client.dispatchPost(new URI("https://play.google.com/music/services/search"), form);
+		String response = client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_SEARCH), form);
 
-        return JSON.Deserialize(response, QueryResponse.class);
-    }
+		return JSON.Deserialize(response, QueryResponse.class);
+	}
 
-    protected File downloadTune(Tune tune) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
+	protected File downloadTune(Tune tune) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
 	{
 		File file = new File(storageDirectory.getAbsolutePath() + tune.getId() + ".mp3");
 		if(!file.exists())
@@ -224,5 +233,11 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		{
 			throw new IOException(e);
 		}
+	}
+
+	@Override
+	public void uploadSong(File song)
+	{
+		
 	}
 }

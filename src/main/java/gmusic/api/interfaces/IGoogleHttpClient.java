@@ -20,6 +20,11 @@ import org.apache.http.client.ClientProtocolException;
 
 public interface IGoogleHttpClient
 {
+	final String COOKIE_FORMAT = "?u=0&xt=%1$s";
+	final String GOOGLE_LOGIN_AUTH_KEY = "Authorization";
+	final String GOOGLE_LOGIN_AUTH_VALUE = "GoogleLogin auth=%1$s";
+	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_LISTEN = "https://play.google.com/music/listen?hl=en&u=0";
+	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES = "https://play.google.com/music/services/";
 	String dispatchPost(URI address, FormBuilder form) throws ClientProtocolException, IOException, URISyntaxException;
 	String dispatchPost(URI address, String json) throws ClientProtocolException, IOException, URISyntaxException;
 	String dispatchGet(URI address) throws URISyntaxException, ClientProtocolException, IOException;
