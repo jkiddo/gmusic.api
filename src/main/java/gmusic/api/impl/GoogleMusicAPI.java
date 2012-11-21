@@ -201,19 +201,19 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		return JSON.Deserialize(response, QueryResponse.class);
 	}
 
-	protected File downloadTune(Tune tune) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
+	protected File downloadTune(Song song) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
 	{
-		File file = new File(storageDirectory.getAbsolutePath() + tune.getId() + ".mp3");
+		File file = new File(storageDirectory.getAbsolutePath() + song.getId() + ".mp3");
 		if(!file.exists())
 		{
-			FileUtils.copyURLToFile(getTuneURL(tune).toURL(), file);
+			FileUtils.copyURLToFile(getTuneURL(song).toURL(), file);
 
-			populateFileWithTuneTags(file, tune);
+			populateFileWithTuneTags(file, song);
 		}
 		return file;
 	}
 
-	private void populateFileWithTuneTags(File file, Tune tune) throws IOException
+	private void populateFileWithTuneTags(File file, Song song) throws IOException
 	{
 		try
 		{
@@ -223,9 +223,20 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 			{
 				tag = new ID3v24Tag();
 			}
-			tag.setField(FieldKey.ARTIST, tune.getAlbumArtist());
-			tag.setField(FieldKey.ALBUM, tune.getAlbum());
-			tag.setField(FieldKey.TITLE, tune.getTitle());
+			tag.setField(FieldKey.ALBUM, song.getAlbum());
+			tag.setField(FieldKey.ALBUM_ARTIST, song.getAlbumArtist());
+			tag.setField(FieldKey.ARTIST, song.getArtist());
+			tag.setField(FieldKey.COMPOSER, song.getComposer());
+			tag.setField(FieldKey.DISC_NO, String.valueOf(song.getDisc()));
+			tag.setField(FieldKey.DISC_TOTAL,
+					String.valueOf(song.getTotalDiscs()));
+			tag.setField(FieldKey.GENRE, song.getGenre());
+			tag.setField(FieldKey.TITLE, song.getTitle());
+			tag.setField(FieldKey.TRACK, String.valueOf(song.getTrack()));
+			tag.setField(FieldKey.TRACK_TOTAL,
+					String.valueOf(song.getTotalTracks()));
+			tag.setField(FieldKey.YEAR, String.valueOf(song.getYear()));
+
 			f.setTag(tag);
 			AudioFileIO.write(f);
 		}
