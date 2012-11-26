@@ -40,8 +40,8 @@ import com.google.common.base.Strings;
 
 public class GoogleMusicAPI implements IGoogleMusicAPI
 {
-	protected IGoogleHttpClient client;
-	private final File storageDirectory;
+	protected final IGoogleHttpClient client;
+	protected final File storageDirectory;
 
 	public GoogleMusicAPI()
 	{
@@ -207,7 +207,6 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		if(!file.exists())
 		{
 			FileUtils.copyURLToFile(getTuneURL(song).toURL(), file);
-
 			populateFileWithTuneTags(file, song);
 		}
 		return file;
