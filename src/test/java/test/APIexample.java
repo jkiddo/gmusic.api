@@ -16,7 +16,6 @@ import gmusic.api.impl.GoogleSkyJamAPI;
 import gmusic.api.interfaces.IGoogleMusicAPI;
 import gmusic.api.model.Playlist;
 import gmusic.api.model.Playlists;
-import gmusic.api.model.QueryResponse;
 import gmusic.api.model.Song;
 
 import java.io.File;
@@ -27,7 +26,6 @@ public class APIexample
 {
 	public static void main(String args[])
 	{
-//		"yidxhrioyxapunee"
 		String password = "ffbokkgtojoklqcu";
 		String username = "jenskristianvilladsen@gmail.com";
 		System.out.println(Calendar.getInstance().getTime());
@@ -46,8 +44,8 @@ public class APIexample
 		try
 		{
 			api.login(username, password);
-//			QueryResponse response = api.search("Jane");
-//			api.downloadSongs(response.getResults().getSongs());
+			// QueryResponse response = api.search("Jane");
+			// api.downloadSongs(response.getResults().getSongs());
 			Playlists playlists = api.getAllPlaylists();
 			for(Playlist list : playlists.getMagicPlaylists())
 			{
@@ -66,8 +64,8 @@ public class APIexample
 					System.out.println(song.getName() + " " + song.getArtist());
 				}
 			}
-			 Collection<Song> songs = api.getAllSongs();
-			 api.downloadSong(songs.iterator().next());
+			Collection<Song> songs = api.getAllSongs();
+			api.downloadSong(songs.iterator().next());
 			// api.downloadSongs(songs);
 		}
 		catch(Exception e)
