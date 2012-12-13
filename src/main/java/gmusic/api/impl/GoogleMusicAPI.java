@@ -15,6 +15,7 @@ import gmusic.api.comm.FormBuilder;
 import gmusic.api.comm.JSON;
 import gmusic.api.interfaces.IGoogleHttpClient;
 import gmusic.api.interfaces.IGoogleMusicAPI;
+import gmusic.api.interfaces.IJsonDeserializer;
 import gmusic.api.model.*;
 import gmusic.model.Tune;
 
@@ -41,16 +42,18 @@ import com.google.common.base.Strings;
 public class GoogleMusicAPI implements IGoogleMusicAPI
 {
 	protected final IGoogleHttpClient client;
+	protected final IJsonDeserializer deserializer;
 	protected final File storageDirectory;
 
 	public GoogleMusicAPI()
 	{
-		this(new ApacheConnector(), new File("."));
+		this(new ApacheConnector(), new JSON(), new File("."));
 	}
 
-	public GoogleMusicAPI(IGoogleHttpClient httpClient, File file)
+	public GoogleMusicAPI(IGoogleHttpClient httpClient, IJsonDeserializer jsonDeserializer, File file)
 	{
 		client = httpClient;
+		deserializer = jsonDeserializer;
 		storageDirectory = file;
 	}
 
@@ -92,24 +95,24 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		form.addFields(fields);
 		form.close();
 
-		return JSON.Deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_ADDPLAYLIST), form), AddPlaylist.class);
+		return deserializer.deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_ADDPLAYLIST), form), AddPlaylist.class);
 	}
 
 	@Override
 	public final Playlists getAllPlaylists() throws IOException, URISyntaxException
 	{
-		return JSON.Deserialize(getPlaylistAssist("{}"), Playlists.class);
+		return deserializer.deserialize(getPlaylistAssist("{}"), Playlists.class);
 	}
 
 	@Override
 	public final Playlist getPlaylist(String plID) throws IOException, URISyntaxException
 	{
-		return JSON.Deserialize(getPlaylistAssist("{\"id\":\"" + plID + "\"}"), Playlist.class);
+		return deserializer.deserialize(getPlaylistAssist("{\"id\":\"" + plID + "\"}"), Playlist.class);
 	}
 
 	protected final URI getTuneURL(Tune tune) throws URISyntaxException, IOException
 	{
-		return new URI(JSON.Deserialize(client.dispatchGet(new URI(String.format(HTTPS_PLAY_GOOGLE_COM_MUSIC_PLAY_SONGID, tune.getId()))), SongUrl.class).getUrl());
+		return new URI(deserializer.deserialize(client.dispatchGet(new URI(String.format(HTTPS_PLAY_GOOGLE_COM_MUSIC_PLAY_SONGID, tune.getId()))), SongUrl.class).getUrl());
 	}
 
 	@Override
@@ -128,7 +131,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		form.addFields(fields);
 		form.close();
 
-		return JSON.Deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_DELETEPLAYLIST), form), DeletePlaylist.class);
+		return deserializer.deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_DELETEPLAYLIST), form), DeletePlaylist.class);
 	}
 
 	private final String getPlaylistAssist(String jsonString) throws IOException, URISyntaxException
@@ -154,7 +157,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		form.addFields(fields);
 		form.close();
 
-		Playlist chunk = JSON.Deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS), form), Playlist.class);
+		Playlist chunk = deserializer.deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS), form), Playlist.class);
 		chunkedCollection.addAll(chunk.getPlaylist());
 
 		if(!Strings.isNullOrEmpty(chunk.getContinuationToken()))
@@ -198,7 +201,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 
 		String response = client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_SEARCH), form);
 
-		return JSON.Deserialize(response, QueryResponse.class);
+		return deserializer.deserialize(response, QueryResponse.class);
 	}
 
 	protected File downloadTune(Song song) throws MalformedURLException, IOException, URISyntaxException

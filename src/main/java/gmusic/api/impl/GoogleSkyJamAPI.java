@@ -12,6 +12,7 @@ package gmusic.api.impl;
 
 import gmusic.api.comm.JSON;
 import gmusic.api.interfaces.IGoogleHttpClient;
+import gmusic.api.interfaces.IJsonDeserializer;
 import gmusic.api.skyjam.interfaces.IGoogleSkyJam;
 import gmusic.api.skyjam.model.AlbumArtRef;
 import gmusic.api.skyjam.model.Playlists;
@@ -42,16 +43,16 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 		super();
 	}
 
-	public GoogleSkyJamAPI(IGoogleHttpClient httpClient, File file)
+	public GoogleSkyJamAPI(IGoogleHttpClient httpClient, IJsonDeserializer deserializer, File file)
 	{
-		super(httpClient, file);
+		super(httpClient, deserializer, file);
 	}
 
 	@Override
 	public Collection<Track> getAllTracks() throws IOException, URISyntaxException
 	{
 		final Collection<Track> chunkedCollection = new ArrayList<Track>();
-		final TrackFeed chunk = JSON.Deserialize(client.dispatchGet(new URI(HTTPS_WWW_GOOGLEAPIS_COM_SJ_V1BETA1_TRACKS)), TrackFeed.class);
+		final TrackFeed chunk = deserializer.deserialize(client.dispatchGet(new URI(HTTPS_WWW_GOOGLEAPIS_COM_SJ_V1BETA1_TRACKS)), TrackFeed.class);
 		chunkedCollection.addAll(chunk.getData().getItems());
 		chunkedCollection.addAll(getTracks(chunk.getNextPageToken()));
 		return chunkedCollection;
@@ -61,7 +62,7 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 	{
 		Collection<Track> chunkedCollection = new ArrayList<Track>();
 
-		TrackFeed chunk = JSON.Deserialize(client.dispatchPost(new URI(HTTPS_WWW_GOOGLEAPIS_COM_SJ_V1BETA1_TRACKFEED), "{\"start-token\":\"" + continuationToken + "\"}"), TrackFeed.class);
+		TrackFeed chunk = deserializer.deserialize(client.dispatchPost(new URI(HTTPS_WWW_GOOGLEAPIS_COM_SJ_V1BETA1_TRACKFEED), "{\"start-token\":\"" + continuationToken + "\"}"), TrackFeed.class);
 		chunkedCollection.addAll(chunk.getData().getItems());
 
 		if(!Strings.isNullOrEmpty(chunk.getNextPageToken()))

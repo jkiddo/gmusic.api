@@ -10,13 +10,16 @@
  ******************************************************************************/
 package gmusic.api.comm;
 
+import gmusic.api.interfaces.IJsonDeserializer;
+
 import com.google.gson.Gson;
 
-public class JSON
+public class JSON implements IJsonDeserializer
 {
-	private final static Gson gson = new Gson();
+	private final Gson gson = new Gson();
 
-	public static <T> T Deserialize(String data, Class<T> clazz)
+	@Override
+	public <T> T deserialize(String data, Class<T> clazz)
 	{
 		return gson.fromJson(data, clazz);
 	}

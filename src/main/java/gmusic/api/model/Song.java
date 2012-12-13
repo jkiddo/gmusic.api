@@ -10,11 +10,10 @@
  ******************************************************************************/
 package gmusic.api.model;
 
+import gmusic.model.Tune;
+
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.URL;
-
-import gmusic.model.Tune;
 
 public class Song extends Tune
 {
