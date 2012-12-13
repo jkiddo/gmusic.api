@@ -10,15 +10,12 @@
  ******************************************************************************/
 package test;
 
-import gmusic.api.comm.HttpUrlConnector;
-import gmusic.api.impl.GoogleMusicAPI;
 import gmusic.api.impl.GoogleSkyJamAPI;
-import gmusic.api.interfaces.IGoogleMusicAPI;
 import gmusic.api.model.Playlist;
 import gmusic.api.model.Playlists;
 import gmusic.api.model.Song;
+import gmusic.api.skyjam.model.Track;
 
-import java.io.File;
 import java.util.Calendar;
 import java.util.Collection;
 
@@ -26,33 +23,49 @@ public class APIexample
 {
 	public static void main(String args[])
 	{
-		String password = "ffbokkgtojoklqcu";
+		String password = "*";
 		String username = "jenskristianvilladsen@gmail.com";
 		System.out.println(Calendar.getInstance().getTime());
-		GoogleSkyJamAPI skyJam = new GoogleSkyJamAPI();
+//		IGoogleMusicAPI api = new GoogleMusicAPI(new HttpUrlConnector(), new File("."));
+//		IGoogleMusicAPI api = new GoogleSkyJamAPI();
+		GoogleSkyJamAPI api = new GoogleSkyJamAPI();
 
 		try
 		{
-			skyJam.login(username, password);
+			api.login(username, password);
 		}
 		catch(Exception e)
 		{
 			e.printStackTrace();
 		}
 
-		IGoogleMusicAPI api = new GoogleMusicAPI(new HttpUrlConnector(), new File("."));
+		
 		try
 		{
 			api.login(username, password);
 			// QueryResponse response = api.search("Jane");
 			// api.downloadSongs(response.getResults().getSongs());
 			Playlists playlists = api.getAllPlaylists();
-			for(Playlist list : playlists.getMagicPlaylists())
+			if(playlists.getMagicPlaylists() != null)
 			{
-				System.out.println("--- " + list.getTitle() + " " + list.getPlaylistId() + " ---");
-				for(Song song : list.getPlaylist())
+				for(Playlist list : playlists.getMagicPlaylists())
 				{
-					System.out.println(song.getName() + " " + song.getArtist());
+					System.out.println("--- " + list.getTitle() + " " + list.getPlaylistId() + " ---");
+					for(Song song : list.getPlaylist())
+					{
+						System.out.println(song.getName() + " " + song.getArtist());
+					}
+				}
+			}
+			
+			Collection<Track> tracks = api.getAllTracks();
+			
+			for(Track t : tracks)
+			{
+				System.out.println(t);
+				if(t.getAlbumArtRef()!= null && !t.getAlbumArtRef().isEmpty())
+				{
+					api.downloadTrack(t);
 				}
 			}
 
@@ -62,6 +75,10 @@ public class APIexample
 				for(Song song : list.getPlaylist())
 				{
 					System.out.println(song.getName() + " " + song.getArtist());
+					if(song.getAlbumArtUrl() != null)
+					{
+						api.downloadSong(song);
+					}
 				}
 			}
 			Collection<Song> songs = api.getAllSongs();

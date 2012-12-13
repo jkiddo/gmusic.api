@@ -29,11 +29,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.datatype.Artwork;
 import org.jaudiotagger.tag.id3.ID3v24Tag;
 
 import com.google.common.base.Strings;
@@ -55,7 +55,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 	}
 
 	@Override
-	public final void login(String email, String password) throws ClientProtocolException, IOException, URISyntaxException, InvalidCredentialsException
+	public final void login(String email, String password) throws IOException, URISyntaxException, InvalidCredentialsException
 	{
 		Map<String, String> fields = new HashMap<String, String>();
 		fields.put("service", "sj");
@@ -77,7 +77,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 	}
 
 	@Override
-	public final Collection<Song> getAllSongs() throws ClientProtocolException, IOException, URISyntaxException
+	public final Collection<Song> getAllSongs() throws IOException, URISyntaxException
 	{
 		return getSongs("");
 	}
@@ -96,24 +96,24 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 	}
 
 	@Override
-	public final Playlists getAllPlaylists() throws ClientProtocolException, IOException, URISyntaxException
+	public final Playlists getAllPlaylists() throws IOException, URISyntaxException
 	{
 		return JSON.Deserialize(getPlaylistAssist("{}"), Playlists.class);
 	}
 
 	@Override
-	public final Playlist getPlaylist(String plID) throws ClientProtocolException, IOException, URISyntaxException
+	public final Playlist getPlaylist(String plID) throws IOException, URISyntaxException
 	{
 		return JSON.Deserialize(getPlaylistAssist("{\"id\":\"" + plID + "\"}"), Playlist.class);
 	}
 
-	protected final URI getTuneURL(Tune tune) throws URISyntaxException, ClientProtocolException, IOException
+	protected final URI getTuneURL(Tune tune) throws URISyntaxException, IOException
 	{
 		return new URI(JSON.Deserialize(client.dispatchGet(new URI(String.format(HTTPS_PLAY_GOOGLE_COM_MUSIC_PLAY_SONGID, tune.getId()))), SongUrl.class).getUrl());
 	}
 
 	@Override
-	public URI getSongURL(Song song) throws URISyntaxException, ClientProtocolException, IOException
+	public URI getSongURL(Song song) throws URISyntaxException, IOException
 	{
 		return getTuneURL(song);
 	}
@@ -131,7 +131,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		return JSON.Deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_DELETEPLAYLIST), form), DeletePlaylist.class);
 	}
 
-	private final String getPlaylistAssist(String jsonString) throws ClientProtocolException, IOException, URISyntaxException
+	private final String getPlaylistAssist(String jsonString) throws IOException, URISyntaxException
 	{
 		Map<String, String> fields = new HashMap<String, String>();
 		fields.put("json", jsonString);
@@ -143,7 +143,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		return client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADPLAYLIST), builder);
 	}
 
-	private final Collection<Song> getSongs(String continuationToken) throws ClientProtocolException, IOException, URISyntaxException
+	private final Collection<Song> getSongs(String continuationToken) throws IOException, URISyntaxException
 	{
 		Collection<Song> chunkedCollection = new ArrayList<Song>();
 
@@ -165,7 +165,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 	}
 
 	@Override
-	public Collection<File> downloadSongs(Collection<Song> songs) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
+	public Collection<File> downloadSongs(Collection<Song> songs) throws MalformedURLException, IOException, URISyntaxException
 	{
 		Collection<File> files = new ArrayList<File>();
 		for(Song song : songs)
@@ -176,13 +176,13 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 	}
 
 	@Override
-	public File downloadSong(Song song) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
+	public File downloadSong(Song song) throws MalformedURLException, IOException, URISyntaxException
 	{
 		return downloadTune(song);
 	}
 
 	@Override
-	public QueryResponse search(String query) throws ClientProtocolException, IOException, URISyntaxException
+	public QueryResponse search(String query) throws IOException, URISyntaxException
 	{
 		if(Strings.isNullOrEmpty(query))
 		{
@@ -201,9 +201,9 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		return JSON.Deserialize(response, QueryResponse.class);
 	}
 
-	protected File downloadTune(Song song) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException
+	protected File downloadTune(Song song) throws MalformedURLException, IOException, URISyntaxException
 	{
-		File file = new File(storageDirectory.getAbsolutePath() + song.getId() + ".mp3");
+		File file = new File(storageDirectory + System.getProperty("path.separator") + song.getId() + ".mp3");
 		if(!file.exists())
 		{
 			FileUtils.copyURLToFile(getTuneURL(song).toURL(), file);
@@ -235,6 +235,15 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 			tag.setField(FieldKey.TRACK_TOTAL,
 					String.valueOf(song.getTotalTracks()));
 			tag.setField(FieldKey.YEAR, String.valueOf(song.getYear()));
+			
+			if(song.getAlbumArtUrl() != null)
+			{
+				Artwork artwork = new Artwork();
+				File imageFile = new File(storageDirectory + System.getProperty("path.separator") + song.getId() + ".im");
+				FileUtils.copyURLToFile(song.getAlbumArtUrlAsURI().toURL(), imageFile);
+				artwork.setFromFile(imageFile);
+				tag.addField(artwork);				
+			}
 
 			f.setTag(tag);
 			AudioFileIO.write(f);

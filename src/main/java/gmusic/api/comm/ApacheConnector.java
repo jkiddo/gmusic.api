@@ -19,8 +19,6 @@ import java.net.URISyntaxException;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.ParseException;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
@@ -63,7 +61,7 @@ public class ApacheConnector implements IGoogleHttpClient
 		localContext.setAttribute(ClientContext.COOKIE_STORE, cookieStore);
 	}
 
-	private HttpResponse execute(URI uri, HttpRequestBase request) throws ClientProtocolException, IOException, URISyntaxException
+	private HttpResponse execute(URI uri, HttpRequestBase request) throws IOException, URISyntaxException
 	{
 		HttpResponse response = httpClient.execute(adjustAddress(uri, request), localContext);
 		if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
@@ -75,13 +73,13 @@ public class ApacheConnector implements IGoogleHttpClient
 	}
 
 	@Override
-	public final synchronized String dispatchGet(URI address) throws URISyntaxException, ClientProtocolException, IOException
+	public final synchronized String dispatchGet(URI address) throws URISyntaxException, IOException
 	{
 		return EntityUtils.toString(execute(address, new HttpGet()).getEntity());
 	}
 
 	@Override
-	public final synchronized String dispatchPost(URI address, FormBuilder form) throws ClientProtocolException, IOException, URISyntaxException
+	public final synchronized String dispatchPost(URI address, FormBuilder form) throws IOException, URISyntaxException
 	{
 		HttpPost request = new HttpPost();
 		request.setEntity(new ByteArrayEntity(form.getBytes()));
@@ -99,7 +97,7 @@ public class ApacheConnector implements IGoogleHttpClient
 		return setupAuthentication(response);
 	}
 
-	private String setupAuthentication(String response) throws ParseException, IOException, URISyntaxException
+	private String setupAuthentication(String response) throws IOException, URISyntaxException
 	{
 		isStartup = false;
 		authorizationToken = Util.extractAuthenticationToken(response);
@@ -139,7 +137,7 @@ public class ApacheConnector implements IGoogleHttpClient
 	}
 
 	@Override
-	public String dispatchPost(URI address, String json) throws ParseException, ClientProtocolException, IOException, URISyntaxException
+	public String dispatchPost(URI address, String json) throws IOException, URISyntaxException
 	{
 		HttpPost request = new HttpPost();
 		request.setEntity(new StringEntity(json));

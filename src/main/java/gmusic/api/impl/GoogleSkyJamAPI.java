@@ -13,6 +13,7 @@ package gmusic.api.impl;
 import gmusic.api.comm.JSON;
 import gmusic.api.interfaces.IGoogleHttpClient;
 import gmusic.api.skyjam.interfaces.IGoogleSkyJam;
+import gmusic.api.skyjam.model.AlbumArtRef;
 import gmusic.api.skyjam.model.Playlists;
 import gmusic.api.skyjam.model.Track;
 import gmusic.api.skyjam.model.TrackFeed;
@@ -25,11 +26,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import org.apache.commons.io.FileUtils;
-import org.apache.http.client.ClientProtocolException;
 import org.jaudiotagger.audio.AudioFile;
 import org.jaudiotagger.audio.AudioFileIO;
 import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.datatype.Artwork;
 import org.jaudiotagger.tag.id3.ID3v24Tag;
 
 import com.google.common.base.Strings;
@@ -47,7 +48,7 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 	}
 
 	@Override
-	public Collection<Track> getAllTracks() throws ClientProtocolException, IOException, URISyntaxException
+	public Collection<Track> getAllTracks() throws IOException, URISyntaxException
 	{
 		final Collection<Track> chunkedCollection = new ArrayList<Track>();
 		final TrackFeed chunk = JSON.Deserialize(client.dispatchGet(new URI(HTTPS_WWW_GOOGLEAPIS_COM_SJ_V1BETA1_TRACKS)), TrackFeed.class);
@@ -56,7 +57,7 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 		return chunkedCollection;
 	}
 
-	private final Collection<Track> getTracks(String continuationToken) throws ClientProtocolException, IOException, URISyntaxException
+	private final Collection<Track> getTracks(String continuationToken) throws IOException, URISyntaxException
 	{
 		Collection<Track> chunkedCollection = new ArrayList<Track>();
 
@@ -71,7 +72,7 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 	}
 
 	@Override
-	public Collection<File> downloadTracks(Collection<Track> tracks) throws URISyntaxException, ClientProtocolException, IOException
+	public Collection<File> downloadTracks(Collection<Track> tracks) throws URISyntaxException, IOException
 	{
 		Collection<File> files = new ArrayList<File>();
 		for(Track track : tracks)
@@ -82,13 +83,13 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 	}
 
 	@Override
-	public URI getTrackURL(Track track) throws URISyntaxException, ClientProtocolException, IOException
+	public URI getTrackURL(Track track) throws URISyntaxException, IOException
 	{
 		return getTuneURL(track);
 	}
 
 	@Override
-	public File downloadTrack(Track track) throws URISyntaxException, ClientProtocolException, IOException
+	public File downloadTrack(Track track) throws URISyntaxException, IOException
 	{
 		File file = new File(storageDirectory.getAbsolutePath() + track.getId() + ".mp3");
 		if(!file.exists())
@@ -108,7 +109,7 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 		// client.dispatchGet(new URI("https://android.clients.google.com/music/mplay?" + track.getId()));
 	}
 
-	private void populateFileWithTuneTags(File file, Track song) throws IOException
+	private void populateFileWithTuneTags(File file, Track track) throws IOException
 	{
 		try
 		{
@@ -118,17 +119,30 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 			{
 				tag = new ID3v24Tag();
 			}
-			tag.setField(FieldKey.ALBUM, song.getAlbum());
-			tag.setField(FieldKey.ALBUM_ARTIST, song.getAlbumArtist());
-			tag.setField(FieldKey.ARTIST, song.getArtist());
-			tag.setField(FieldKey.COMPOSER, song.getComposer());
-			tag.setField(FieldKey.DISC_NO, String.valueOf(song.getDiscNumber()));
-			tag.setField(FieldKey.DISC_TOTAL, String.valueOf(song.getTotalDiscCount()));
-			tag.setField(FieldKey.GENRE, song.getGenre());
-			tag.setField(FieldKey.TITLE, song.getTitle());
-			tag.setField(FieldKey.TRACK, String.valueOf(song.getTrackNumber()));
-			tag.setField(FieldKey.TRACK_TOTAL, String.valueOf(song.getTotalTrackCount()));
-			tag.setField(FieldKey.YEAR, String.valueOf(song.getYear()));
+			tag.setField(FieldKey.ALBUM, track.getAlbum());
+			tag.setField(FieldKey.ALBUM_ARTIST, track.getAlbumArtist());
+			tag.setField(FieldKey.ARTIST, track.getArtist());
+			tag.setField(FieldKey.COMPOSER, track.getComposer());
+			tag.setField(FieldKey.DISC_NO, String.valueOf(track.getDiscNumber()));
+			tag.setField(FieldKey.DISC_TOTAL, String.valueOf(track.getTotalDiscCount()));
+			tag.setField(FieldKey.GENRE, track.getGenre());
+			tag.setField(FieldKey.TITLE, track.getTitle());
+			tag.setField(FieldKey.TRACK, String.valueOf(track.getTrackNumber()));
+			tag.setField(FieldKey.TRACK_TOTAL, String.valueOf(track.getTotalTrackCount()));
+			tag.setField(FieldKey.YEAR, String.valueOf(track.getYear()));
+
+			if(track.getAlbumArtRef() != null && !track.getAlbumArtRef().isEmpty())
+			{
+				AlbumArtRef[] array = track.getAlbumArtRef().toArray(new AlbumArtRef[track.getAlbumArtRef().size()]);
+				for(int i = 0; i < array.length; i++)
+				{
+					Artwork artwork = new Artwork();
+					File imageFile = new File(storageDirectory + System.getProperty("path.separator") + track.getId() + ".im" + i);
+					FileUtils.copyURLToFile(array[i].getUrlAsURI().toURL(), imageFile);
+					artwork.setFromFile(imageFile);
+					tag.addField(artwork);
+				}
+			}
 
 			f.setTag(tag);
 			AudioFileIO.write(f);
@@ -140,14 +154,14 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 	}
 
 	@Override
-	public Playlists getAllSkyJamPlaylists() throws ClientProtocolException, IOException, URISyntaxException
+	public Playlists getAllSkyJamPlaylists() throws IOException, URISyntaxException
 	{
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public TrackFeed getSkyJamPlaylist(String plID) throws ClientProtocolException, IOException, URISyntaxException
+	public TrackFeed getSkyJamPlaylist(String plID) throws IOException, URISyntaxException
 	{
 		// TODO Auto-generated method stub
 		return null;

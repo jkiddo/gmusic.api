@@ -22,8 +22,6 @@ import java.util.Collection;
 
 import javax.naming.directory.InvalidAttributesException;
 
-import org.apache.http.client.ClientProtocolException;
-
 /**
  * http://readthedocs.org/docs/unofficial-google-music-api/en/latest/ https://github.com/simon-weber/Unofficial-Google-Music-API
  * 
@@ -39,23 +37,23 @@ public interface IGoogleMusicAPI
 	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_ADDPLAYLIST = "https://play.google.com/music/services/addplaylist";
 	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_PLAY_SONGID = "https://play.google.com/music/play?u=0&songid=%1$s&pt=e";
 
-	void login(String email, String password) throws ClientProtocolException, IOException, URISyntaxException, InvalidCredentialsException;
+	void login(String email, String password) throws IOException, URISyntaxException, InvalidCredentialsException;
 
-	Collection<Song> getAllSongs() throws ClientProtocolException, IOException, URISyntaxException;
+	Collection<Song> getAllSongs() throws IOException, URISyntaxException;
 
 	AddPlaylist addPlaylist(String playlistName) throws Exception;
 
-	Playlists getAllPlaylists() throws ClientProtocolException, IOException, URISyntaxException;
+	Playlists getAllPlaylists() throws IOException, URISyntaxException;
 
-	Playlist getPlaylist(String plID) throws ClientProtocolException, IOException, URISyntaxException;
+	Playlist getPlaylist(String plID) throws IOException, URISyntaxException;
 
-	URI getSongURL(Song song) throws URISyntaxException, ClientProtocolException, IOException;
+	URI getSongURL(Song song) throws URISyntaxException, IOException;
 
 	DeletePlaylist deletePlaylist(String id) throws Exception;
 
-	Collection<File> downloadSongs(Collection<Song> songs) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException, InvalidAttributesException;
+	Collection<File> downloadSongs(Collection<Song> songs) throws MalformedURLException, IOException, URISyntaxException, InvalidAttributesException;
 
-	File downloadSong(Song song) throws MalformedURLException, ClientProtocolException, IOException, URISyntaxException, InvalidAttributesException;
+	File downloadSong(Song song) throws MalformedURLException, IOException, URISyntaxException, InvalidAttributesException;
 
 	QueryResponse search(String query) throws Exception;
 	

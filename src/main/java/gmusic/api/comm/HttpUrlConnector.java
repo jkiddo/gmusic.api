@@ -53,13 +53,6 @@ public class HttpUrlConnector implements IGoogleHttpClient
 	@Override
 	public final synchronized String dispatchGet(URI address) throws URISyntaxException, IOException
 	{
-		// HttpURLConnection connection = (HttpURLConnection) adjustAddress(address).toURL().openConnection();
-		// connection.setRequestMethod("GET");
-		// connection.setRequestProperty("Cookie", rawCookie);
-		// if(authorizationToken != null)
-		// {
-		// connection.setRequestProperty("Authorization", String.format("GoogleLogin auth=%1$s", authorizationToken));
-		// }
 		HttpURLConnection connection = prepareConnection(address, false, "GET");
 
 		connection.connect();

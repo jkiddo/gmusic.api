@@ -10,6 +10,10 @@
  ******************************************************************************/
 package gmusic.api.model;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+
 import gmusic.model.Tune;
 
 public class Song extends Tune
@@ -57,6 +61,11 @@ public class Song extends Tune
 	public final String getAlbumArtUrl()
 	{
 		return albumArtUrl;
+	}
+	
+	public final URI getAlbumArtUrlAsURI() throws URISyntaxException
+	{
+		return new URI("http:" + albumArtUrl);
 	}
 
 	public final void setAlbumArtUrl(String albumArtUrl)

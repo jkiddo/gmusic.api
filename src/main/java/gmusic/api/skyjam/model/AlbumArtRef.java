@@ -10,6 +10,9 @@
  ******************************************************************************/
 package gmusic.api.skyjam.model;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+
 public class AlbumArtRef
 {
 	private String url;
@@ -17,5 +20,10 @@ public class AlbumArtRef
 	public final String getUrl()
 	{
 		return url;
+	}
+	
+	public final URI getUrlAsURI() throws URISyntaxException
+	{
+		return new URI(url);
 	}
 }
