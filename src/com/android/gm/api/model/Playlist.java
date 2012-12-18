@@ -94,8 +94,8 @@ public class Playlist implements IJsonObject<Playlist>, IJsonArray<Song> {
 
 	@Override
 	public ArrayList<Song> fromJsonArray(JSONArray jsonArray) {
+		ArrayList<Song> songList = new ArrayList<Song>();
 		if (jsonArray != null && jsonArray.length() > 0) {
-			ArrayList<Song> songList = new ArrayList<Song>();
 			for (int i = 0; i < jsonArray.length(); i++) {
 				try {
 					Song song = new Song().fromJsonObject(jsonArray
@@ -105,9 +105,8 @@ public class Playlist implements IJsonObject<Playlist>, IJsonArray<Song> {
 					e.printStackTrace();
 				}
 			}
-			return songList;
 		}
 
-		return null;
+		return songList;
 	}
 }

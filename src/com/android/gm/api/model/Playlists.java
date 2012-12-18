@@ -38,14 +38,14 @@ public class Playlists implements IJsonObject<Playlists>, IJsonArray<Playlist> {
 		playlistsArray = jsonObject.optJSONArray("magicPlaylists");
 		mMagicPlaylists = fromJsonArray(playlistsArray);
 
-		//return this object to allow chaining
+		// return this object to allow chaining
 		return this;
 	}
 
 	@Override
 	public ArrayList<Playlist> fromJsonArray(JSONArray jsonArray) {
+		ArrayList<Playlist> playlists = new ArrayList<Playlist>();
 		if (jsonArray != null && jsonArray.length() > 0) {
-			ArrayList<Playlist> playlists = new ArrayList<Playlist>();
 			for (int i = 0; i < jsonArray.length(); i++) {
 				try {
 					Playlist playlist = new Playlist().fromJsonObject(jsonArray
@@ -55,9 +55,8 @@ public class Playlists implements IJsonObject<Playlists>, IJsonArray<Playlist> {
 					e.printStackTrace();
 				}
 			}
-			return playlists;
 		}
 
-		return null;
+		return playlists;
 	}
 }
