@@ -10,7 +10,6 @@
  ******************************************************************************/
 package gmusic.api.impl;
 
-import gmusic.api.comm.JSON;
 import gmusic.api.interfaces.IGoogleHttpClient;
 import gmusic.api.interfaces.IJsonDeserializer;
 import gmusic.api.skyjam.interfaces.IGoogleSkyJam;

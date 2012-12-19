@@ -41,6 +41,7 @@ public class HttpUrlConnector implements IGoogleHttpClient
 	private HttpURLConnection prepareConnection(URI address, boolean output, String method) throws URISyntaxException, IOException
 	{
 		HttpURLConnection connection = (HttpURLConnection) adjustAddress(address).toURL().openConnection();
+		connection.setRequestProperty("Accept-Encoding", "gzip,deflate");
 		connection.setRequestMethod(method);
 		connection.setDoOutput(output);
 		if(authorizationToken != null)
@@ -54,7 +55,6 @@ public class HttpUrlConnector implements IGoogleHttpClient
 	public final synchronized String dispatchGet(URI address) throws URISyntaxException, IOException
 	{
 		HttpURLConnection connection = prepareConnection(address, false, "GET");
-
 		connection.connect();
 		if(connection.getResponseCode() != 200)
 		{

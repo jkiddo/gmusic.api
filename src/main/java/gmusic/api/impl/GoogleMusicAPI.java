@@ -10,13 +10,19 @@
  ******************************************************************************/
 package gmusic.api.impl;
 
-import gmusic.api.comm.ApacheConnector;
 import gmusic.api.comm.FormBuilder;
+import gmusic.api.comm.HttpUrlConnector;
 import gmusic.api.comm.JSON;
 import gmusic.api.interfaces.IGoogleHttpClient;
 import gmusic.api.interfaces.IGoogleMusicAPI;
 import gmusic.api.interfaces.IJsonDeserializer;
-import gmusic.api.model.*;
+import gmusic.api.model.AddPlaylist;
+import gmusic.api.model.DeletePlaylist;
+import gmusic.api.model.Playlist;
+import gmusic.api.model.Playlists;
+import gmusic.api.model.QueryResponse;
+import gmusic.api.model.Song;
+import gmusic.api.model.SongUrl;
 import gmusic.model.Tune;
 
 import java.io.File;
@@ -47,7 +53,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 
 	public GoogleMusicAPI()
 	{
-		this(new ApacheConnector(), new JSON(), new File("."));
+		this(new HttpUrlConnector(), new JSON(), new File("."));
 	}
 
 	public GoogleMusicAPI(IGoogleHttpClient httpClient, IJsonDeserializer jsonDeserializer, File file)

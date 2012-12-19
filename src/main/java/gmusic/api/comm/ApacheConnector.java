@@ -63,10 +63,11 @@ public class ApacheConnector implements IGoogleHttpClient
 
 	private HttpResponse execute(URI uri, HttpRequestBase request) throws IOException, URISyntaxException
 	{
+		request.addHeader("Accept-Encoding", "gzip, deflate");
 		HttpResponse response = httpClient.execute(adjustAddress(uri, request), localContext);
 		if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
 		{
-			EntityUtils.toString(response.getEntity());
+			EntityUtils.consumeQuietly(response.getEntity());
 			throw new IllegalStateException("Statuscode " + response.getStatusLine().getStatusCode() + " not supported");
 		}
 		return response;
@@ -83,7 +84,7 @@ public class ApacheConnector implements IGoogleHttpClient
 	{
 		HttpPost request = new HttpPost();
 		request.setEntity(new ByteArrayEntity(form.getBytes()));
-
+		
 		if(!Strings.isNullOrEmpty(form.getContentType()))
 		{
 			request.setHeader("Content-Type", form.getContentType());

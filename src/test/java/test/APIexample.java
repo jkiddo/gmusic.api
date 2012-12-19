@@ -23,7 +23,7 @@ public class APIexample
 {
 	public static void main(String args[])
 	{
-		String password = "*";
+		String password = ".";
 		String username = "jenskristianvilladsen@gmail.com";
 		System.out.println(Calendar.getInstance().getTime());
 //		IGoogleMusicAPI api = new GoogleMusicAPI(new HttpUrlConnector(), new File("."));
