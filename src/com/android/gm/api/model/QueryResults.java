@@ -42,14 +42,16 @@ public class QueryResults implements IJsonObject<QueryResults>,
 
 	@Override
 	public QueryResults fromJsonObject(JSONObject jsonObject) {
-		JSONArray jsonArray = jsonObject.optJSONArray("artists");
-		mArtists = (ArrayList<Song>) fromJsonArray(jsonArray);
+		if (jsonObject != null) {
+			JSONArray jsonArray = jsonObject.optJSONArray("artists");
+			mArtists = (ArrayList<Song>) fromJsonArray(jsonArray);
 
-		jsonArray = jsonObject.optJSONArray("albums");
-		mAlbums = (ArrayList<Song>) fromJsonArray(jsonArray);
+			jsonArray = jsonObject.optJSONArray("albums");
+			mAlbums = (ArrayList<Song>) fromJsonArray(jsonArray);
 
-		jsonArray = jsonObject.optJSONArray("songs");
-		mSongs = (ArrayList<Song>) fromJsonArray(jsonArray);
+			jsonArray = jsonObject.optJSONArray("songs");
+			mSongs = (ArrayList<Song>) fromJsonArray(jsonArray);
+		}
 
 		// return this object to allow chaining
 		return this;
