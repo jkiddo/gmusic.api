@@ -32,11 +32,13 @@ public class Playlists implements IJsonObject<Playlists>, IJsonArray<Playlist> {
 
 	@Override
 	public Playlists fromJsonObject(JSONObject jsonObject) {
-		JSONArray playlistsArray = jsonObject.optJSONArray("playlists");
-		mPlaylists = fromJsonArray(playlistsArray);
+		if (jsonObject != null) {
+			JSONArray playlistsArray = jsonObject.optJSONArray("playlists");
+			mPlaylists = fromJsonArray(playlistsArray);
 
-		playlistsArray = jsonObject.optJSONArray("magicPlaylists");
-		mMagicPlaylists = fromJsonArray(playlistsArray);
+			playlistsArray = jsonObject.optJSONArray("magicPlaylists");
+			mMagicPlaylists = fromJsonArray(playlistsArray);
+		}
 
 		// return this object to allow chaining
 		return this;

@@ -78,16 +78,19 @@ public class Playlist implements IJsonObject<Playlist>, IJsonArray<Song> {
 
 	@Override
 	public Playlist fromJsonObject(JSONObject jsonObject) {
-		mTitle = jsonObject.optString("title", null);
-		mPlaylistId = jsonObject.optString("playlistId", null);
-		mRequestTime = jsonObject.optLong("requestTime");
-		mContinuationToken = jsonObject.optString("continuationToken", null);
-		mDifferentialUpdate = jsonObject.optBoolean("differentialUpdate");
-		mContinuation = jsonObject.optBoolean("continuation");
+		if (jsonObject != null) {
+			mTitle = jsonObject.optString("title", null);
+			mPlaylistId = jsonObject.optString("playlistId", null);
+			mRequestTime = jsonObject.optLong("requestTime");
+			mContinuationToken = jsonObject
+					.optString("continuationToken", null);
+			mDifferentialUpdate = jsonObject.optBoolean("differentialUpdate");
+			mContinuation = jsonObject.optBoolean("continuation");
 
-		JSONArray songsArray = jsonObject.optJSONArray("playlist");
-		mPlaylist = fromJsonArray(songsArray);
-
+			JSONArray songsArray = jsonObject.optJSONArray("playlist");
+			mPlaylist = fromJsonArray(songsArray);
+		}
+		
 		// return this object to allow chaining
 		return this;
 	}
