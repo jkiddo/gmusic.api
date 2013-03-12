@@ -61,8 +61,6 @@ public class GoogleMusicApi {
 
 	public static final boolean login(Context context, String authToken) {
 		if (!TextUtils.isEmpty(authToken)) {
-			System.out.println(authToken);
-
 			SimpleForm form = new SimpleForm().close();
 			GoogleMusicApi.setAuthorizationHeader(authToken);
 			mHttpClient.post(context,
