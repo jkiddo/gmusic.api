@@ -3,6 +3,7 @@
 	<name>android.gmusic.api</name>
 	<comment></comment>
 	<projects>
+		<project>android-async-http</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
