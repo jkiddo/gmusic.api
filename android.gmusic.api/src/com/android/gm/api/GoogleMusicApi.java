@@ -59,6 +59,21 @@ public class GoogleMusicApi {
 		mHttpClient.setUserAgent(userAgent);
 	}
 
+	public static final boolean login(Context context, String authToken) {
+		if (!TextUtils.isEmpty(authToken)) {
+			System.out.println(authToken);
+
+			SimpleForm form = new SimpleForm().close();
+			GoogleMusicApi.setAuthorizationHeader(authToken);
+			mHttpClient.post(context,
+					"https://play.google.com/music/listen?hl=en&u=0",
+					new ByteArrayEntity(form.toString().getBytes()),
+					form.getContentType());
+			return true;
+		} else
+			return false;
+	}
+
 	public static final boolean login(Context context, String email,
 			String password) {
 
@@ -82,16 +97,7 @@ public class GoogleMusicApi {
 
 			String authToken = response.substring(startIndex, endIndex).trim();
 
-			if (!TextUtils.isEmpty(authToken)) {
-				GoogleMusicApi.setAuthorizationHeader(authToken);
-				form = new SimpleForm().close();
-				mHttpClient.post(context,
-						"https://play.google.com/music/listen?hl=en&u=0",
-						new ByteArrayEntity(form.toString().getBytes()),
-						form.getContentType());
-				return true;
-			} else
-				return false;
+			return login(context, authToken);
 		}
 
 		return false;
