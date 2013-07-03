@@ -56,6 +56,6 @@ public interface IGoogleMusicAPI
 	File downloadSong(Song song) throws MalformedURLException, IOException, URISyntaxException, InvalidAttributesException;
 
 	QueryResponse search(String query) throws Exception;
-	
+
 	void uploadSong(File song);
 }

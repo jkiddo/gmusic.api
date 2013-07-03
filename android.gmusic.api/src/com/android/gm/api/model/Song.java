@@ -4,7 +4,8 @@ import org.json.JSONObject;
 
 import com.android.gm.api.interfaces.IJsonObject;
 
-public class Song implements IJsonObject<Song> {
+public class Song implements IJsonObject<Song>
+{
 	private int mTotalTracks;
 	private boolean mSubjectToCuration;
 	private String mName;
@@ -36,249 +37,311 @@ public class Song implements IJsonObject<Song> {
 	private String mRating;
 	private String mComment;
 
-	public String getAlbum() {
+	public String getAlbum()
+	{
 		return mAlbum;
 	}
 
-	public String getAlbumArtist() {
+	public String getAlbumArtist()
+	{
 		return mAlbumArtist;
 	}
 
-	public String getAlbumArtistNorm() {
+	public String getAlbumArtistNorm()
+	{
 		return mAlbumArtistNorm;
 	}
 
-	public String getAlbumArtUrl() {
+	public String getAlbumArtUrl()
+	{
 		return mAlbumArtUrl;
 	}
 
-	public String getAlbumNorm() {
+	public String getAlbumNorm()
+	{
 		return mAlbumNorm;
 	}
 
-	public String getArtist() {
+	public String getArtist()
+	{
 		return mArtist;
 	}
 
-	public String getArtistNorm() {
+	public String getArtistNorm()
+	{
 		return mArtistNorm;
 	}
 
-	public int getBeatsPerMinute() {
+	public int getBeatsPerMinute()
+	{
 		return mBeatsPerMinute;
 	}
 
-	public String getComment() {
+	public String getComment()
+	{
 		return mComment;
 	}
 
-	public String getComposer() {
+	public String getComposer()
+	{
 		return mComposer;
 	}
 
-	public float getCreationDate() {
+	public float getCreationDate()
+	{
 		return mCreationDate;
 	}
 
-	public int getDisc() {
+	public int getDisc()
+	{
 		return mDisc;
 	}
 
-	public long getDurationMillis() {
+	public long getDurationMillis()
+	{
 		return mDurationMillis;
 	}
 
-	public String getGenre() {
+	public String getGenre()
+	{
 		return mGenre;
 	}
 
-	public String getId() {
+	public String getId()
+	{
 		return mId;
 	}
 
-	public double getLastPlayed() {
+	public double getLastPlayed()
+	{
 		return mLastPlayed;
 	}
 
-	public String getMatchedId() {
+	public String getMatchedId()
+	{
 		return mMatchedId;
 	}
 
-	public String getName() {
+	public String getName()
+	{
 		return mName;
 	}
 
-	public int getPlayCount() {
+	public int getPlayCount()
+	{
 		return mPlayCount;
 	}
 
-	public String getRating() {
+	public String getRating()
+	{
 		return mRating;
 	}
 
-	public String getTitle() {
+	public String getTitle()
+	{
 		return mTitle;
 	}
 
-	public String getTitleNorm() {
+	public String getTitleNorm()
+	{
 		return mTitleNorm;
 	}
 
-	public int getTotalDiscs() {
+	public int getTotalDiscs()
+	{
 		return mTotalDiscs;
 	}
 
-	public int getTotalTracks() {
+	public int getTotalTracks()
+	{
 		return mTotalTracks;
 	}
 
-	public int getTrack() {
+	public int getTrack()
+	{
 		return mTrack;
 	}
 
-	public int getType() {
+	public int getType()
+	{
 		return mType;
 	}
 
-	public String getUrl() {
+	public String getUrl()
+	{
 		return mUrl;
 	}
 
-	public int getYear() {
+	public int getYear()
+	{
 		return mYear;
 	}
 
-	public boolean isDeleted() {
+	public boolean isDeleted()
+	{
 		return mIsDeleted;
 	}
 
-	public boolean isSubjectToCuration() {
+	public boolean isSubjectToCuration()
+	{
 		return mSubjectToCuration;
 	}
 
-	public void setAlbum(String album) {
+	public void setAlbum(String album)
+	{
 		mAlbum = album;
 	}
 
-	public void setAlbumArtist(String albumArtist) {
+	public void setAlbumArtist(String albumArtist)
+	{
 		mAlbumArtist = albumArtist;
 	}
 
-	public void setAlbumArtistNorm(String albumArtistNorm) {
+	public void setAlbumArtistNorm(String albumArtistNorm)
+	{
 		mAlbumArtistNorm = albumArtistNorm;
 	}
 
-	public void setAlbumArtUrl(String albumArtUrl) {
+	public void setAlbumArtUrl(String albumArtUrl)
+	{
 		mAlbumArtUrl = albumArtUrl;
 	}
 
-	public void setAlbumNorm(String albumNorm) {
+	public void setAlbumNorm(String albumNorm)
+	{
 		mAlbumNorm = albumNorm;
 	}
 
-	public void setArtist(String artist) {
+	public void setArtist(String artist)
+	{
 		mArtist = artist;
 	}
 
-	public void setArtistNorm(String artistNorm) {
+	public void setArtistNorm(String artistNorm)
+	{
 		mArtistNorm = artistNorm;
 	}
 
-	public void setBeatsPerMinute(int beatsPerMinute) {
+	public void setBeatsPerMinute(int beatsPerMinute)
+	{
 		mBeatsPerMinute = beatsPerMinute;
 	}
 
-	public void setComment(String comment) {
+	public void setComment(String comment)
+	{
 		mComment = comment;
 	}
 
-	public void setComposer(String composer) {
+	public void setComposer(String composer)
+	{
 		mComposer = composer;
 	}
 
-	public void setCreationDate(long creationDate) {
+	public void setCreationDate(long creationDate)
+	{
 		mCreationDate = creationDate;
 	}
 
-	public void setDeleted(boolean isDeleted) {
+	public void setDeleted(boolean isDeleted)
+	{
 		mIsDeleted = isDeleted;
 	}
 
-	public void setDisc(int disc) {
+	public void setDisc(int disc)
+	{
 		mDisc = disc;
 	}
 
-	public void setDurationMillis(long durationMillis) {
+	public void setDurationMillis(long durationMillis)
+	{
 		mDurationMillis = durationMillis;
 	}
 
-	public void setGenre(String genre) {
+	public void setGenre(String genre)
+	{
 		mGenre = genre;
 	}
 
-	public void setId(String id) {
+	public void setId(String id)
+	{
 		mId = id;
 	}
 
-	public void setLastPlayed(long lastPlayed) {
+	public void setLastPlayed(long lastPlayed)
+	{
 		mLastPlayed = lastPlayed;
 	}
 
-	public void setMatchedId(String matchedId) {
+	public void setMatchedId(String matchedId)
+	{
 		mMatchedId = matchedId;
 	}
 
-	public void setName(String name) {
+	public void setName(String name)
+	{
 		mName = name;
 	}
 
-	public void setPlaycount(int playcount) {
+	public void setPlaycount(int playcount)
+	{
 		mPlayCount = playcount;
 	}
 
-	public void setRating(String rating) {
+	public void setRating(String rating)
+	{
 		mRating = rating;
 	}
 
-	public void setSubjectToCuration(boolean subjectToCuration) {
+	public void setSubjectToCuration(boolean subjectToCuration)
+	{
 		mSubjectToCuration = subjectToCuration;
 	}
 
-	public void setTitle(String title) {
+	public void setTitle(String title)
+	{
 		mTitle = title;
 	}
 
-	public void setTitleNorm(String titleNorm) {
+	public void setTitleNorm(String titleNorm)
+	{
 		mTitleNorm = titleNorm;
 	}
 
-	public void setTotalDiscs(int totalDiscs) {
+	public void setTotalDiscs(int totalDiscs)
+	{
 		mTotalDiscs = totalDiscs;
 	}
 
-	public void setTotalTracks(int totalTracks) {
+	public void setTotalTracks(int totalTracks)
+	{
 		mTotalTracks = totalTracks;
 	}
 
-	public void setTrack(int track) {
+	public void setTrack(int track)
+	{
 		mTrack = track;
 	}
 
-	public void setType(int type) {
+	public void setType(int type)
+	{
 		mType = type;
 	}
 
-	public void setUrl(String url) {
+	public void setUrl(String url)
+	{
 		mUrl = url;
 	}
 
-	public void setYear(int year) {
+	public void setYear(int year)
+	{
 		mYear = year;
 	}
 
 	@Override
-	public Song fromJsonObject(JSONObject jsonObject) {
-		if (jsonObject != null) {
+	public Song fromJsonObject(JSONObject jsonObject)
+	{
+		if(jsonObject != null)
+		{
 			mTotalTracks = jsonObject.optInt("totalTracks");
 			mSubjectToCuration = jsonObject.optBoolean("subjectToCuration");
 			mName = jsonObject.optString("name", null);

@@ -236,22 +236,20 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 			tag.setField(FieldKey.ARTIST, song.getArtist());
 			tag.setField(FieldKey.COMPOSER, song.getComposer());
 			tag.setField(FieldKey.DISC_NO, String.valueOf(song.getDisc()));
-			tag.setField(FieldKey.DISC_TOTAL,
-					String.valueOf(song.getTotalDiscs()));
+			tag.setField(FieldKey.DISC_TOTAL, String.valueOf(song.getTotalDiscs()));
 			tag.setField(FieldKey.GENRE, song.getGenre());
 			tag.setField(FieldKey.TITLE, song.getTitle());
 			tag.setField(FieldKey.TRACK, String.valueOf(song.getTrack()));
-			tag.setField(FieldKey.TRACK_TOTAL,
-					String.valueOf(song.getTotalTracks()));
+			tag.setField(FieldKey.TRACK_TOTAL, String.valueOf(song.getTotalTracks()));
 			tag.setField(FieldKey.YEAR, String.valueOf(song.getYear()));
-			
+
 			if(song.getAlbumArtUrl() != null)
 			{
 				Artwork artwork = new Artwork();
 				File imageFile = new File(storageDirectory + System.getProperty("path.separator") + song.getId() + ".im");
 				FileUtils.copyURLToFile(song.getAlbumArtUrlAsURI().toURL(), imageFile);
 				artwork.setFromFile(imageFile);
-				tag.addField(artwork);				
+				tag.addField(artwork);
 			}
 
 			f.setTag(tag);
@@ -266,6 +264,6 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 	@Override
 	public void uploadSong(File song)
 	{
-		
+
 	}
 }

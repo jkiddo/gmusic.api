@@ -61,7 +61,7 @@ public class Song extends Tune
 	{
 		return albumArtUrl;
 	}
-	
+
 	public final URI getAlbumArtUrlAsURI() throws URISyntaxException
 	{
 		return new URI("http:" + albumArtUrl);

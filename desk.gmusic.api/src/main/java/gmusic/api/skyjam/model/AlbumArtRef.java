@@ -21,7 +21,7 @@ public class AlbumArtRef
 	{
 		return url;
 	}
-	
+
 	public final URI getUrlAsURI() throws URISyntaxException
 	{
 		return new URI(url);

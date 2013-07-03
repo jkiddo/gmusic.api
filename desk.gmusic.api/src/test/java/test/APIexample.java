@@ -26,8 +26,8 @@ public class APIexample
 		String password = ".";
 		String username = "jenskristianvilladsen@gmail.com";
 		System.out.println(Calendar.getInstance().getTime());
-//		IGoogleMusicAPI api = new GoogleMusicAPI(new HttpUrlConnector(), new File("."));
-//		IGoogleMusicAPI api = new GoogleSkyJamAPI();
+		// IGoogleMusicAPI api = new GoogleMusicAPI(new HttpUrlConnector(), new File("."));
+		// IGoogleMusicAPI api = new GoogleSkyJamAPI();
 		GoogleSkyJamAPI api = new GoogleSkyJamAPI();
 
 		try
@@ -39,7 +39,6 @@ public class APIexample
 			e.printStackTrace();
 		}
 
-		
 		try
 		{
 			api.login(username, password);
@@ -57,13 +56,13 @@ public class APIexample
 					}
 				}
 			}
-			
+
 			Collection<Track> tracks = api.getAllTracks();
-			
+
 			for(Track t : tracks)
 			{
 				System.out.println(t);
-				if(t.getAlbumArtRef()!= null && !t.getAlbumArtRef().isEmpty())
+				if(t.getAlbumArtRef() != null && !t.getAlbumArtRef().isEmpty())
 				{
 					api.downloadTrack(t);
 				}

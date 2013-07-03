@@ -9,40 +9,48 @@ import com.android.gm.api.interfaces.IJsonArray;
 import com.android.gm.api.interfaces.IJsonObject;
 
 //not used in the Android app
-public class QueryResults implements IJsonObject<QueryResults>,
-		IJsonArray<Song> {
+public class QueryResults implements IJsonObject<QueryResults>, IJsonArray<Song>
+{
 
 	private ArrayList<Song> mArtists;
 	private ArrayList<Song> mAlbums;
 	private ArrayList<Song> mSongs;
 
-	public ArrayList<Song> getArtists() {
+	public ArrayList<Song> getArtists()
+	{
 		return mArtists;
 	}
 
-	public void setArtists(ArrayList<Song> artists) {
+	public void setArtists(ArrayList<Song> artists)
+	{
 		mArtists = artists;
 	}
 
-	public ArrayList<Song> getAlbums() {
+	public ArrayList<Song> getAlbums()
+	{
 		return mAlbums;
 	}
 
-	public void setAlbums(ArrayList<Song> albums) {
+	public void setAlbums(ArrayList<Song> albums)
+	{
 		mAlbums = albums;
 	}
 
-	public ArrayList<Song> getSongs() {
+	public ArrayList<Song> getSongs()
+	{
 		return mSongs;
 	}
 
-	public void setSongs(ArrayList<Song> songs) {
+	public void setSongs(ArrayList<Song> songs)
+	{
 		mSongs = songs;
 	}
 
 	@Override
-	public QueryResults fromJsonObject(JSONObject jsonObject) {
-		if (jsonObject != null) {
+	public QueryResults fromJsonObject(JSONObject jsonObject)
+	{
+		if(jsonObject != null)
+		{
 			JSONArray jsonArray = jsonObject.optJSONArray("artists");
 			mArtists = (ArrayList<Song>) fromJsonArray(jsonArray);
 
@@ -58,15 +66,20 @@ public class QueryResults implements IJsonObject<QueryResults>,
 	}
 
 	@Override
-	public ArrayList<Song> fromJsonArray(JSONArray jsonArray) {
+	public ArrayList<Song> fromJsonArray(JSONArray jsonArray)
+	{
 		ArrayList<Song> songList = new ArrayList<Song>();
-		if (jsonArray != null && jsonArray.length() > 0) {
-			for (int i = 0; i < jsonArray.length(); i++) {
-				try {
-					Song song = new Song().fromJsonObject(jsonArray
-							.getJSONObject(i));
+		if(jsonArray != null && jsonArray.length() > 0)
+		{
+			for(int i = 0; i < jsonArray.length(); i++)
+			{
+				try
+				{
+					Song song = new Song().fromJsonObject(jsonArray.getJSONObject(i));
 					songList.add(song);
-				} catch (JSONException e) {
+				}
+				catch(JSONException e)
+				{
 					e.printStackTrace();
 				}
 			}
