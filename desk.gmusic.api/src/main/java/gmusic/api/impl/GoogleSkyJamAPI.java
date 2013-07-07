@@ -10,30 +10,25 @@
  ******************************************************************************/
 package gmusic.api.impl;
 
+import gmusic.api.comm.Util;
 import gmusic.api.interfaces.IGoogleHttpClient;
 import gmusic.api.interfaces.IJsonDeserializer;
 import gmusic.api.skyjam.interfaces.IGoogleSkyJam;
-import gmusic.api.skyjam.model.AlbumArtRef;
 import gmusic.api.skyjam.model.Playlists;
 import gmusic.api.skyjam.model.Track;
 import gmusic.api.skyjam.model.TrackFeed;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import org.apache.commons.io.FileUtils;
-import org.jaudiotagger.audio.AudioFile;
-import org.jaudiotagger.audio.AudioFileIO;
-import org.jaudiotagger.tag.FieldKey;
-import org.jaudiotagger.tag.Tag;
-import org.jaudiotagger.tag.datatype.Artwork;
-import org.jaudiotagger.tag.id3.ID3v24Tag;
-
 import com.google.common.base.Strings;
+import com.google.common.io.Closeables;
 
 public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 {
@@ -94,8 +89,10 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 		File file = new File(storageDirectory.getAbsolutePath() + track.getId() + ".mp3");
 		if(!file.exists())
 		{
-			FileUtils.copyURLToFile(getTuneURL(track).toURL(), file);
-			populateFileWithTuneTags(file, track);
+			ByteBuffer buffer = Util.uriTobuffer(getTuneURL(track));
+			FileOutputStream fos = new FileOutputStream(file);
+			fos.write(buffer.array());
+			Closeables.close(fos, true);
 		}
 		return file;
 
@@ -107,50 +104,6 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 		// new NameValuePair("key", "value")
 		// });
 		// client.dispatchGet(new URI("https://android.clients.google.com/music/mplay?" + track.getId()));
-	}
-
-	private void populateFileWithTuneTags(File file, Track track) throws IOException
-	{
-		try
-		{
-			AudioFile f = AudioFileIO.read(file);
-			Tag tag = f.getTag();
-			if(tag == null)
-			{
-				tag = new ID3v24Tag();
-			}
-			tag.setField(FieldKey.ALBUM, track.getAlbum());
-			tag.setField(FieldKey.ALBUM_ARTIST, track.getAlbumArtist());
-			tag.setField(FieldKey.ARTIST, track.getArtist());
-			tag.setField(FieldKey.COMPOSER, track.getComposer());
-			tag.setField(FieldKey.DISC_NO, String.valueOf(track.getDiscNumber()));
-			tag.setField(FieldKey.DISC_TOTAL, String.valueOf(track.getTotalDiscCount()));
-			tag.setField(FieldKey.GENRE, track.getGenre());
-			tag.setField(FieldKey.TITLE, track.getTitle());
-			tag.setField(FieldKey.TRACK, String.valueOf(track.getTrackNumber()));
-			tag.setField(FieldKey.TRACK_TOTAL, String.valueOf(track.getTotalTrackCount()));
-			tag.setField(FieldKey.YEAR, String.valueOf(track.getYear()));
-
-			if(track.getAlbumArtRef() != null && !track.getAlbumArtRef().isEmpty())
-			{
-				AlbumArtRef[] array = track.getAlbumArtRef().toArray(new AlbumArtRef[track.getAlbumArtRef().size()]);
-				for(int i = 0; i < array.length; i++)
-				{
-					Artwork artwork = new Artwork();
-					File imageFile = new File(storageDirectory + System.getProperty("path.separator") + track.getId() + ".im" + i);
-					FileUtils.copyURLToFile(array[i].getUrlAsURI().toURL(), imageFile);
-					artwork.setFromFile(imageFile);
-					tag.addField(artwork);
-				}
-			}
-
-			f.setTag(tag);
-			AudioFileIO.write(f);
-		}
-		catch(Exception e)
-		{
-			throw new IOException(e);
-		}
 	}
 
 	@Override

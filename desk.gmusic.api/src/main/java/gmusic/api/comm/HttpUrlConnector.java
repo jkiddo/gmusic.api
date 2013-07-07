@@ -21,8 +21,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-import org.apache.commons.io.IOUtils;
-
 import com.google.common.base.Strings;
 
 public class HttpUrlConnector implements IGoogleHttpClient
@@ -62,8 +60,8 @@ public class HttpUrlConnector implements IGoogleHttpClient
 		}
 
 		setCookie(connection);
-
-		return IOUtils.toString(connection.getInputStream());
+		return Util.getStringFromInputStream(connection.getInputStream());
+		// return IOUtils.toString(connection.getInputStream());
 	}
 
 	@Override
@@ -81,7 +79,8 @@ public class HttpUrlConnector implements IGoogleHttpClient
 			throw new IllegalStateException("Statuscode " + connection.getResponseCode() + " not supported");
 		}
 
-		String response = IOUtils.toString(connection.getInputStream());
+//		String response = IOUtils.toString(connection.getInputStream());
+		String response = Util.getStringFromInputStream(connection.getInputStream());
 
 		setCookie(connection);
 
@@ -132,7 +131,8 @@ public class HttpUrlConnector implements IGoogleHttpClient
 			throw new IllegalStateException("Statuscode " + connection.getResponseCode() + " not supported");
 		}
 
-		String response = IOUtils.toString(connection.getInputStream());
+//		String response = IOUtils.toString(connection.getInputStream());
+		String response = Util.getStringFromInputStream(connection.getInputStream());
 		if(!isStartup)
 		{
 			return response;
