@@ -10,7 +10,10 @@
  ******************************************************************************/
 package test;
 
+import gmusic.api.comm.ApacheConnector;
+import gmusic.api.comm.JSON;
 import gmusic.api.comm.Util;
+import gmusic.api.impl.GoogleMusicAPI;
 import gmusic.api.impl.GoogleSkyJamAPI;
 import gmusic.api.model.Playlist;
 import gmusic.api.model.Playlists;
@@ -38,15 +41,17 @@ public class APIexample
 {
 	public static void main(String args[])
 	{
-		String password = ".";
+		String password = "xjzrjmymcqbgflcl";
 		String username = "jenskristianvilladsen@gmail.com";
 		System.out.println(Calendar.getInstance().getTime());
 		// IGoogleMusicAPI api = new GoogleMusicAPI(new HttpUrlConnector(), new File("."));
 		// IGoogleMusicAPI api = new GoogleSkyJamAPI();
-		GoogleSkyJamAPI api = new GoogleSkyJamAPI();
+		GoogleSkyJamAPI api = new GoogleSkyJamAPI(new ApacheConnector(), new JSON(), new File("."));
+GoogleMusicAPI aa = new GoogleMusicAPI(new ApacheConnector(), new JSON(), new File("."));
 
 		try
 		{
+			aa.login(username, password);
 			api.login(username, password);
 		}
 		catch(Exception e)

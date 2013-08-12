@@ -67,7 +67,7 @@ public class ApacheConnector implements IGoogleHttpClient
 		HttpResponse response = httpClient.execute(adjustAddress(uri, request), localContext);
 		if(response.getStatusLine().getStatusCode() != HttpStatus.SC_OK)
 		{
-			EntityUtils.consumeQuietly(response.getEntity());
+			EntityUtils.toString(response.getEntity());
 			throw new IllegalStateException("Statuscode " + response.getStatusLine().getStatusCode() + " not supported");
 		}
 		return response;
