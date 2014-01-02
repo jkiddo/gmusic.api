@@ -30,7 +30,9 @@ public class Util
 
 		int startIndex = response.indexOf("Auth=") + "Auth=".length();
 		int endIndex = response.indexOf("\n", startIndex);
-
+		
+		if(startIndex > -1 && endIndex == -1)
+			endIndex = response.length();
 		return response.substring(startIndex, endIndex).trim();
 	}
 
