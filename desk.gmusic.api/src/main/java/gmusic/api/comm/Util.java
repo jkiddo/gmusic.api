@@ -10,19 +10,19 @@
  ******************************************************************************/
 package gmusic.api.comm;
 
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.URI;
-import java.nio.ByteBuffer;
+import java.nio.charset.Charset;
 
-import org.apache.http.ParseException;
+import com.google.common.base.Charsets;
+import com.google.common.io.CharStreams;
+import com.google.common.io.Closeables;
 
 public class Util
 {
-	static String extractAuthenticationToken(String response) throws ParseException
+	static String extractAuthenticationToken(String response)
 	{
 
 		// Pattern pattern = Pattern.compile("Auth=(?<AUTH>(.*?))$", Pattern.CASE_INSENSITIVE);
@@ -30,93 +30,29 @@ public class Util
 
 		int startIndex = response.indexOf("Auth=") + "Auth=".length();
 		int endIndex = response.indexOf("\n", startIndex);
-		
+
 		if(startIndex > -1 && endIndex == -1)
 			endIndex = response.length();
 		return response.substring(startIndex, endIndex).trim();
 	}
 
-	public static byte[] readBytes(InputStream inputStream) throws IOException
+	public static String getStringFromInputStream(final InputStream is) throws IOException
 	{
-		ByteArrayOutputStream byteBuffer = new ByteArrayOutputStream();
-		int bufferSize = 1024;
-		byte[] buffer = new byte[bufferSize];
-
-		int len = 0;
-		while((len = inputStream.read(buffer)) != -1)
-		{
-			byteBuffer.write(buffer, 0, len);
-		}
-
-		return byteBuffer.toByteArray();
+		return toString(is, Charsets.UTF_8);
 	}
 
-	public static String getStringFromInputStream(InputStream is)
+	public static String toString(final InputStream is, final Charset cs) throws IOException
 	{
-		BufferedReader br = null;
-		StringBuilder sb = new StringBuilder();
-
-		String line;
+		Closeable closeMe = is;
 		try
 		{
-
-			br = new BufferedReader(new InputStreamReader(is));
-			while((line = br.readLine()) != null)
-			{
-				sb.append(line);
-			}
-
-		}
-		catch(IOException e)
-		{
-			e.printStackTrace();
+			final InputStreamReader isr = new InputStreamReader(is, cs);
+			closeMe = isr;
+			return CharStreams.toString(isr);
 		}
 		finally
 		{
-			if(br != null)
-			{
-				try
-				{
-					br.close();
-				}
-				catch(IOException e)
-				{
-					e.printStackTrace();
-				}
-			}
-		}
-
-		return sb.toString();
-
-	}
-
-	public static ByteBuffer uriTobuffer(URI uri) throws IOException
-	{
-		ByteArrayOutputStream bais = new ByteArrayOutputStream();
-		InputStream is = null;
-		try
-		{
-			is = uri.toURL().openStream();
-			byte[] byteChunk = new byte[4096]; // Or whatever size you want to read in at a time.
-			int n;
-
-			while((n = is.read(byteChunk)) > 0)
-			{
-				bais.write(byteChunk, 0, n);
-			}
-			return ByteBuffer.wrap(bais.toByteArray()).asReadOnlyBuffer();
-
-		}
-		catch(IOException e)
-		{
-			throw e;
-		}
-		finally
-		{
-			if(is != null)
-			{
-				is.close();
-			}
+			Closeables.close(closeMe, true);
 		}
 	}
 }

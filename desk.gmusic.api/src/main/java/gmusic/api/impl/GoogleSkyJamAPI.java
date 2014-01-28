@@ -10,7 +10,6 @@
  ******************************************************************************/
 package gmusic.api.impl;
 
-import gmusic.api.comm.Util;
 import gmusic.api.interfaces.IGoogleHttpClient;
 import gmusic.api.interfaces.IJsonDeserializer;
 import gmusic.api.skyjam.interfaces.IGoogleSkyJam;
@@ -19,16 +18,13 @@ import gmusic.api.skyjam.model.Track;
 import gmusic.api.skyjam.model.TrackFeed;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 
 import com.google.common.base.Strings;
-import com.google.common.io.Closeables;
 
 public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 {
@@ -86,7 +82,8 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 	@Override
 	public File downloadTrack(Track track) throws URISyntaxException, IOException
 	{
-		File file = new File(storageDirectory.getAbsolutePath() + track.getId() + ".mp3");
+		return downloadTune(track);
+		/*File file = new File(storageDirectory.getAbsolutePath() + track.getId() + ".mp3");
 		if(!file.exists())
 		{
 			ByteBuffer buffer = Util.uriTobuffer(getTuneURL(track));
@@ -94,8 +91,8 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 			fos.write(buffer.array());
 			Closeables.close(fos, true);
 		}
-		return file;
-
+		return file;*/
+		
 		// if(androidDeviceId == null)
 		// {
 		// throw new InvalidAttributesException("Android Device ID not specified in constructor");

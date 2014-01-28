@@ -10,11 +10,9 @@
  ******************************************************************************/
 package test;
 
-import gmusic.api.comm.ApacheConnector;
-import gmusic.api.comm.JSON;
-import gmusic.api.comm.Util;
 import gmusic.api.impl.GoogleMusicAPI;
 import gmusic.api.impl.GoogleSkyJamAPI;
+import gmusic.api.interfaces.IGoogleMusicAPI;
 import gmusic.api.model.Playlist;
 import gmusic.api.model.Playlists;
 import gmusic.api.model.Song;
@@ -22,9 +20,7 @@ import gmusic.api.skyjam.model.AlbumArtRef;
 import gmusic.api.skyjam.model.Track;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.nio.ByteBuffer;
 import java.util.Calendar;
 import java.util.Collection;
 
@@ -35,24 +31,25 @@ import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.datatype.Artwork;
 import org.jaudiotagger.tag.id3.ID3v24Tag;
 
-import com.google.common.io.Closeables;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
 
 public class APIexample
 {
 	public static void main(String args[])
 	{
-		String password = "xjzrjmymcqbgflcl";
-		String username = "jenskristianvilladsen@gmail.com";
+		String password = "skdælfkædskf";
+		String username = "some@gmail.com";
 		System.out.println(Calendar.getInstance().getTime());
-		// IGoogleMusicAPI api = new GoogleMusicAPI(new HttpUrlConnector(), new File("."));
+		IGoogleMusicAPI api = new GoogleMusicAPI();
 		// IGoogleMusicAPI api = new GoogleSkyJamAPI();
-		GoogleSkyJamAPI api = new GoogleSkyJamAPI(new ApacheConnector(), new JSON(), new File("."));
-GoogleMusicAPI aa = new GoogleMusicAPI(new ApacheConnector(), new JSON(), new File("."));
+		// GoogleSkyJamAPI api = new GoogleSkyJamAPI(new ApacheConnector(), new JSON(), new File("."));
+		// GoogleMusicAPI aa = new GoogleMusicAPI(new ApacheConnector(), new JSON(), new File("."));
 
 		try
 		{
-			aa.login(username, password);
-			api.login(username, password);
+			new GoogleSkyJamAPI().login(username, password);
+			new GoogleMusicAPI().login(username, password);
 		}
 		catch(Exception e)
 		{
@@ -77,15 +74,15 @@ GoogleMusicAPI aa = new GoogleMusicAPI(new ApacheConnector(), new JSON(), new Fi
 				}
 			}
 
-			Collection<Track> tracks = api.getAllTracks();
+			Collection<Song> tracks = api.getAllSongs();
 
-			for(Track track : tracks)
+			for(Song track : tracks)
 			{
-				System.out.println(track);
-				if(track.getAlbumArtRef() != null && !track.getAlbumArtRef().isEmpty())
+				if(track.getAlbumArtUrl() != null)
 				{
-					File track_f = api.downloadTrack(track);
+					File track_f = api.downloadSong(track);
 					populateFileWithTuneTags(track_f, track);
+					break;
 				}
 			}
 
@@ -99,6 +96,7 @@ GoogleMusicAPI aa = new GoogleMusicAPI(new ApacheConnector(), new JSON(), new Fi
 					{
 						File song_f = api.downloadSong(song);
 						populateFileWithTuneTags(song_f, song);
+						break;
 					}
 				}
 			}
@@ -138,14 +136,12 @@ GoogleMusicAPI aa = new GoogleMusicAPI(new ApacheConnector(), new JSON(), new Fi
 			if(song.getAlbumArtUrl() != null)
 			{
 				Artwork artwork = new Artwork();
-				File imageFile = new File(new File(".") + System.getProperty("path.separator") + song.getId() + ".im");
-				ByteBuffer buffer = Util.uriTobuffer(song.getAlbumArtUrlAsURI());
-				FileOutputStream fos = new FileOutputStream(imageFile);
-				fos.write(buffer.array());
-				Closeables.close(fos, true);
-				// FileUtils.copyURLToFile(song.getAlbumArtUrlAsURI().toURL(), imageFile);
-				artwork.setFromFile(imageFile);
+				artwork.setBinaryData(Resources.toByteArray(song.getAlbumArtUrlAsURI().toURL()));
 				tag.addField(artwork);
+				
+				/*File imageFile = new File(new File(".") + System.getProperty("path.separator") + song.getId() + ".im");
+				Files.write(Resources.toByteArray(song.getAlbumArtUrlAsURI().toURL()), imageFile);
+				artwork.setFromFile(imageFile);*/
 			}
 
 			f.setTag(tag);
@@ -185,11 +181,10 @@ GoogleMusicAPI aa = new GoogleMusicAPI(new ApacheConnector(), new JSON(), new Fi
 				for(int i = 0; i < array.length; i++)
 				{
 					Artwork artwork = new Artwork();
-					File imageFile = new File(new File(".") + System.getProperty("path.separator") + track.getId() + ".im" + i);
-					ByteBuffer buffer = Util.uriTobuffer(array[i].getUrlAsURI());
-					FileOutputStream fos = new FileOutputStream(imageFile);
-					fos.write(buffer.array());
-					Closeables.close(fos, true);
+					File imageFile = new File(new File(".") + System.getProperty("path.separator") + track.getId() + ".im");
+					Files.write(Resources.toByteArray(array[i].getUrlAsURI().toURL()), imageFile);
+					artwork.setFromFile(imageFile);
+					tag.addField(artwork);
 
 					artwork.setFromFile(imageFile);
 					tag.addField(artwork);

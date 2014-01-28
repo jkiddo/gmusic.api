@@ -13,7 +13,6 @@ package gmusic.api.impl;
 import gmusic.api.comm.FormBuilder;
 import gmusic.api.comm.HttpUrlConnector;
 import gmusic.api.comm.JSON;
-import gmusic.api.comm.Util;
 import gmusic.api.interfaces.IGoogleHttpClient;
 import gmusic.api.interfaces.IGoogleMusicAPI;
 import gmusic.api.interfaces.IJsonDeserializer;
@@ -27,19 +26,18 @@ import gmusic.api.model.SongUrl;
 import gmusic.model.Tune;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import com.google.common.base.Strings;
-import com.google.common.io.Closeables;
+import com.google.common.io.Files;
+import com.google.common.io.Resources;
 
 public class GoogleMusicAPI implements IGoogleMusicAPI
 {
@@ -206,15 +204,12 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		return deserializer.deserialize(response, QueryResponse.class);
 	}
 
-	protected File downloadTune(Song song) throws MalformedURLException, IOException, URISyntaxException
+	protected File downloadTune(Tune song) throws MalformedURLException, IOException, URISyntaxException
 	{
-		File file = new File(storageDirectory + System.getProperty("path.separator") + song.getId() + ".mp3");
+		File file = new File(storageDirectory.getAbsolutePath() + System.getProperty("path.separator") + song.getId() + ".mp3");
 		if(!file.exists())
 		{
-			ByteBuffer buffer = Util.uriTobuffer(getTuneURL(song));
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.write(buffer.array());
-			Closeables.close(fos, true);
+			Files.write(Resources.toByteArray(getTuneURL(song).toURL()), file);
 		}
 		return file;
 	}

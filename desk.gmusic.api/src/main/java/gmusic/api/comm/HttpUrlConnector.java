@@ -61,7 +61,6 @@ public class HttpUrlConnector implements IGoogleHttpClient
 
 		setCookie(connection);
 		return Util.getStringFromInputStream(connection.getInputStream());
-		// return IOUtils.toString(connection.getInputStream());
 	}
 
 	@Override
@@ -79,7 +78,6 @@ public class HttpUrlConnector implements IGoogleHttpClient
 			throw new IllegalStateException("Statuscode " + connection.getResponseCode() + " not supported");
 		}
 
-//		String response = IOUtils.toString(connection.getInputStream());
 		String response = Util.getStringFromInputStream(connection.getInputStream());
 
 		setCookie(connection);
@@ -131,7 +129,6 @@ public class HttpUrlConnector implements IGoogleHttpClient
 			throw new IllegalStateException("Statuscode " + connection.getResponseCode() + " not supported");
 		}
 
-//		String response = IOUtils.toString(connection.getInputStream());
 		String response = Util.getStringFromInputStream(connection.getInputStream());
 		if(!isStartup)
 		{
