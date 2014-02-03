@@ -83,16 +83,10 @@ public class GoogleSkyJamAPI extends GoogleMusicAPI implements IGoogleSkyJam
 	public File downloadTrack(Track track) throws URISyntaxException, IOException
 	{
 		return downloadTune(track);
-		/*File file = new File(storageDirectory.getAbsolutePath() + track.getId() + ".mp3");
-		if(!file.exists())
-		{
-			ByteBuffer buffer = Util.uriTobuffer(getTuneURL(track));
-			FileOutputStream fos = new FileOutputStream(file);
-			fos.write(buffer.array());
-			Closeables.close(fos, true);
-		}
-		return file;*/
-		
+		/*
+		 * File file = new File(storageDirectory.getAbsolutePath() + track.getId() + ".mp3"); if(!file.exists()) { ByteBuffer buffer = Util.uriTobuffer(getTuneURL(track)); FileOutputStream fos = new FileOutputStream(file); fos.write(buffer.array()); Closeables.close(fos, true); } return file;
+		 */
+
 		// if(androidDeviceId == null)
 		// {
 		// throw new InvalidAttributesException("Android Device ID not specified in constructor");

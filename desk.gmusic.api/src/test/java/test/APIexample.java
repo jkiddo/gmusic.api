@@ -138,10 +138,10 @@ public class APIexample
 				Artwork artwork = new Artwork();
 				artwork.setBinaryData(Resources.toByteArray(song.getAlbumArtUrlAsURI().toURL()));
 				tag.addField(artwork);
-				
-				/*File imageFile = new File(new File(".") + System.getProperty("path.separator") + song.getId() + ".im");
-				Files.write(Resources.toByteArray(song.getAlbumArtUrlAsURI().toURL()), imageFile);
-				artwork.setFromFile(imageFile);*/
+
+				/*
+				 * File imageFile = new File(new File(".") + System.getProperty("path.separator") + song.getId() + ".im"); Files.write(Resources.toByteArray(song.getAlbumArtUrlAsURI().toURL()), imageFile); artwork.setFromFile(imageFile);
+				 */
 			}
 
 			f.setTag(tag);

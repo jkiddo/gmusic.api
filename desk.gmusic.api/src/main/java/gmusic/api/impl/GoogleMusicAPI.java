@@ -158,7 +158,10 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		form.close();
 
 		Playlist chunk = deserializer.deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS), form), Playlist.class);
-		chunkedCollection.addAll(chunk.getPlaylist());
+		if(chunk.getPlaylist() != null)
+		{
+			chunkedCollection.addAll(chunk.getPlaylist());
+		}
 
 		if(!Strings.isNullOrEmpty(chunk.getContinuationToken()))
 		{
