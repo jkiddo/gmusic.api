@@ -157,16 +157,24 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		form.addFields(fields);
 		form.close();
 
-		Playlist chunk = deserializer.deserialize(client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS), form), Playlist.class);
-		if(chunk.getPlaylist() != null)
+		String response = client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS), form);
+		int start = response.indexOf("([[") + 4;
+		int end = response.indexOf("window.parent['slat_progress'](1.0);");
+		response = response.substring(start, end);
+		String[] responses = response.split("\\]\\r?\\n,\\[");
+		for(String r : responses)
 		{
-			chunkedCollection.addAll(chunk.getPlaylist());
+			String[] values = r.split(",");
+				
+			Song s = new Song();
+			s.setId(values[0].replace("\"", ""));
+			s.setName(values[1].replace("\"", ""));
+			s.setAlbumArtUrl(values[2].replace("\"", ""));
+			s.setAlbumArtist(values[3].replace("\"", ""));
+			s.setAlbum(values[4].replace("\"", ""));
+			chunkedCollection.add(s);
 		}
 
-		if(!Strings.isNullOrEmpty(chunk.getContinuationToken()))
-		{
-			chunkedCollection.addAll(getSongs(chunk.getContinuationToken()));
-		}
 		return chunkedCollection;
 	}
 

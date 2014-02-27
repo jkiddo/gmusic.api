@@ -38,8 +38,8 @@ public class APIexample
 {
 	public static void main(String args[])
 	{
-		String password = "skdælfkædskf";
-		String username = "some@gmail.com";
+		String password = "kfkhgfkhgfkhgfkhgfkhgfkg";
+		String username = "gkjhgkjghkjhg@gmail.com";
 		System.out.println(Calendar.getInstance().getTime());
 		IGoogleMusicAPI api = new GoogleMusicAPI();
 		// IGoogleMusicAPI api = new GoogleSkyJamAPI();
@@ -61,6 +61,8 @@ public class APIexample
 			api.login(username, password);
 			// QueryResponse response = api.search("Jane");
 			// api.downloadSongs(response.getResults().getSongs());
+			Song _song = api.getAllSongs().iterator().next();
+			api.downloadSong(_song);
 			Playlists playlists = api.getAllPlaylists();
 			if(playlists.getMagicPlaylists() != null)
 			{

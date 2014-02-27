@@ -31,8 +31,10 @@ public interface IGoogleMusicAPI
 {
 	final String HTTPS_WWW_GOOGLE_COM_ACCOUNTS_CLIENT_LOGIN = "https://www.google.com/accounts/ClientLogin";
 	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_SEARCH = "https://play.google.com/music/services/search";
-	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS = "https://play.google.com/music/services/loadalltracks";
-	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADPLAYLIST = "https://play.google.com/music/services/loadplaylist";
+	//final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS = "https://play.google.com/music/services/loadalltracks";
+	//final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADPLAYLIST = "https://play.google.com/music/services/loadplaylist";
+	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS = "https://play.google.com/music/services/streamingloadalltracks";
+	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADPLAYLIST = "https://play.google.com/music/services/streamingloadplaylist";
 	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_DELETEPLAYLIST = "https://play.google.com/music/services/deleteplaylist";
 	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_ADDPLAYLIST = "https://play.google.com/music/services/addplaylist";
 	final String HTTPS_PLAY_GOOGLE_COM_MUSIC_PLAY_SONGID = "https://play.google.com/music/play?u=0&songid=%1$s&pt=e";

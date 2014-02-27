@@ -79,7 +79,6 @@ public class HttpUrlConnector implements IGoogleHttpClient
 		}
 
 		String response = Util.getStringFromInputStream(connection.getInputStream());
-
 		setCookie(connection);
 
 		if(!isStartup)
@@ -111,7 +110,7 @@ public class HttpUrlConnector implements IGoogleHttpClient
 	{
 		if(address.toString().startsWith(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES))
 		{
-			return address = new URI(address.toURL() + String.format(COOKIE_FORMAT, cookie));
+			return address = new URI(address.toURL() + String.format(COOKIE_FORMAT, cookie) + "&format=jsarray");
 		}
 
 		return address;
