@@ -109,7 +109,7 @@ public class ApacheConnector implements IGoogleHttpClient
 	{
 		if(address.toString().startsWith(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES))
 		{
-			address = new URI(address.toURL() + String.format(COOKIE_FORMAT, getCookieValue("xt")));
+			address = new URI(address.toURL() + String.format(COOKIE_FORMAT, getCookieValue("xt"))+ "&format=jsarray");
 		}
 
 		request.setURI(address);
