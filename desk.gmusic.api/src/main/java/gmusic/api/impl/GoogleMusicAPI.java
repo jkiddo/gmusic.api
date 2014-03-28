@@ -27,6 +27,7 @@ import gmusic.model.Tune;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,6 +35,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
@@ -164,18 +167,52 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		String[] responses = response.split("\\]\\r?\\n,\\[");
 		for(String r : responses)
 		{
-			String[] values = r.split(",");
-				
+			String[] values = splitNotInQuotes(r);
+		
 			Song s = new Song();
-			s.setId(values[0].replace("\"", ""));
-			s.setName(values[1].replace("\"", ""));
-			s.setAlbumArtUrl(values[2].replace("\"", ""));
-			s.setAlbumArtist(values[3].replace("\"", ""));
-			s.setAlbum(values[4].replace("\"", ""));
+			s.setId(strip(values[0]));
+			s.setTitle(strip(values[1]));
+			s.setName(strip(values[1]));
+			if(!Strings.isNullOrEmpty(values[2])) {
+			  s.setAlbumArtUrl("https:"+strip(values[2]));
+			}
+			s.setArtist(strip(values[3]));
+			s.setAlbum(strip(values[4]));
+			s.setAlbumArtist(strip(values[5]));
+			s.setGenre(strip(values[11]));
+			s.setYear(Integer.valueOf(values[17]));
+			if(!Strings.isNullOrEmpty(values[24])) {
+			  s.setCreationDate(Float.valueOf(values[24])/1000);
+			}
+			if(!Strings.isNullOrEmpty(values[36])) {
+			  s.setUrl("https:"+strip(values[36]));
+			}
+			
 			chunkedCollection.add(s);
 		}
 
 		return chunkedCollection;
+	}
+
+	private String[] splitNotInQuotes(String r) {
+		ArrayList<String> result = new ArrayList<String>();
+    boolean split=false;
+    String target="";
+
+		for (int i=0; i<r.length(); i++) {
+		    char c = r.charAt(i);
+		    
+		    if (c == '"') split = !split;
+		    
+		    if (split || c != ',') target += c;
+		    else {
+		        result.add(target);
+		        target = "";
+		    }
+		}
+
+		if (target.length()>0) result.add(target);
+		return result.toArray(new String[result.size()]);
 	}
 
 	@Override
@@ -229,5 +266,9 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 	public void uploadSong(File song)
 	{
 
+	}
+	
+	private String strip (String str) {
+		return str.replace("\"", "");
 	}
 }
