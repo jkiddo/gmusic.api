@@ -27,7 +27,6 @@ import gmusic.model.Tune;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -35,8 +34,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
@@ -145,7 +142,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		FormBuilder builder = new FormBuilder();
 		builder.addFields(fields);
 		builder.close();
-
+System.out.println(">>"+client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADPLAYLIST), builder));
 		return client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADPLAYLIST), builder);
 	}
 
@@ -165,31 +162,36 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		int end = response.indexOf("window.parent['slat_progress'](1.0);");
 		response = response.substring(start, end);
 		String[] responses = response.split("\\]\\r?\\n,\\[");
+		
 		for(String r : responses)
 		{
 			String[] values = splitNotInQuotes(r);
 		
 			Song s = new Song();
-			s.setId(strip(values[0]));
-			s.setTitle(strip(values[1]));
-			s.setName(strip(values[1]));
+			s.setId(values[0]);
+			s.setTitle(values[1]);
+			s.setName(values[1]);
 			if(!Strings.isNullOrEmpty(values[2])) {
-			  s.setAlbumArtUrl("https:"+strip(values[2]));
+			  s.setAlbumArtUrl("https:"+values[2]);
 			}
-			s.setArtist(strip(values[3]));
-			s.setAlbum(strip(values[4]));
-			s.setAlbumArtist(strip(values[5]));
-			s.setGenre(strip(values[11]));
-			s.setYear(Integer.valueOf(values[17]));
+			s.setArtist(values[3]);
+			s.setAlbum(values[4]);
+			s.setAlbumArtist(values[5]);
+			s.setGenre(values[11]);
+			s.setDurationMillis(toLong(values[13]));
+			s.setType(toInt(values[16]));
+			s.setYear(toInt(values[18]));
+			s.setPlaycount(toInt(values[22]));
+			s.setRating(values[23]);
 			if(!Strings.isNullOrEmpty(values[24])) {
 			  s.setCreationDate(Float.valueOf(values[24])/1000);
 			}
 			if(!Strings.isNullOrEmpty(values[36])) {
-			  s.setUrl("https:"+strip(values[36]));
+			  s.setUrl("https:"+values[36]);
 			}
-			
+
 			chunkedCollection.add(s);
-		}
+ 		}
 
 		return chunkedCollection;
 	}
@@ -206,13 +208,41 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		    
 		    if (split || c != ',') target += c;
 		    else {
-		        result.add(target);
+		        result.add(strip(target));
 		        target = "";
 		    }
 		}
 
 		if (target.length()>0) result.add(target);
 		return result.toArray(new String[result.size()]);
+	}
+	
+	private String strip (String str) {
+		return str.replace("\"", "");
+	}
+	
+	private int toInt(String str) {
+		int retInt;
+		try {
+			retInt=Integer.valueOf(str);
+		}
+		catch  (NumberFormatException e)
+		{
+			retInt=0;
+		}
+		return retInt;
+	}
+
+	private long toLong(String str) {
+		long retLong;
+		try {
+			retLong=Long.valueOf(str);
+		}
+		catch  (NumberFormatException e)
+		{
+			retLong=0;
+		}
+		return retLong;
 	}
 
 	@Override
@@ -266,9 +296,5 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 	public void uploadSong(File song)
 	{
 
-	}
-	
-	private String strip (String str) {
-		return str.replace("\"", "");
 	}
 }
