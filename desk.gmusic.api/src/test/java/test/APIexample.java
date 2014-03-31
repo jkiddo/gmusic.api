@@ -21,6 +21,8 @@ import gmusic.api.skyjam.model.Track;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.util.Calendar;
 import java.util.Collection;
 
@@ -38,8 +40,8 @@ public class APIexample
 {
 	public static void main(String args[])
 	{
-		String password = "kfkhgfkhgfkhgfkhgfkhgfkg";
-		String username = "gkjhgkjghkjhg@gmail.com";
+		String password = "";
+		String username = "";
 		System.out.println(Calendar.getInstance().getTime());
 		IGoogleMusicAPI api = new GoogleMusicAPI();
 		// IGoogleMusicAPI api = new GoogleSkyJamAPI();
@@ -61,8 +63,11 @@ public class APIexample
 			api.login(username, password);
 			// QueryResponse response = api.search("Jane");
 			// api.downloadSongs(response.getResults().getSongs());
-			Song _song = api.getAllSongs().iterator().next();
+
+			Song _song = new Song();
+			_song.setId("bc94ef2b-7d16-3815-b1cb-63fbef75b87c");
 			api.downloadSong(_song);
+
 			Playlists playlists = api.getAllPlaylists();
 			if(playlists.getMagicPlaylists() != null)
 			{
@@ -111,6 +116,12 @@ public class APIexample
 			e.printStackTrace();
 		}
 		System.out.println(Calendar.getInstance().getTime());
+	}
+
+	private static void toDisk(Song song) throws MalformedURLException, IOException, URISyntaxException
+	{
+		File file = new File(new File(".") + System.getProperty("path.separator") + song.getId() + ".dl");
+		Files.write(Resources.toByteArray(song.getAlbumArtUrlAsURI().toURL()), file);
 	}
 
 	private static void populateFileWithTuneTags(File file, Song song) throws IOException
