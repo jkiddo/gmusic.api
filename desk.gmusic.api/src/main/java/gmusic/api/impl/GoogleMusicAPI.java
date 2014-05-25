@@ -98,7 +98,78 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
     public final Collection<Song> getAllSongs() throws IOException,
             URISyntaxException
     {
-        return getSongs("");
+        final Collection<Song> chunkedCollection = new ArrayList<Song>();
+
+        // Map<String, String> fields = new HashMap<String, String>();
+        // fields.put("json", "{\"continuationToken\":\"" + continuationToken +
+        // "\"}");
+
+        final FormBuilder form = new FormBuilder();
+        // form.addFields(fields);
+        form.close();
+
+        final String response = client.dispatchPost(new URI(
+                HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS), form);
+
+        // extract the JSON from the response
+        final List<String> jsSongCollectionWrappers = getJsSongCollectionWrappers(response);
+
+        final Gson gson = new Gson();
+        final JsonParser parser = new JsonParser();
+
+        for (final String songCollectionWrapperJson : jsSongCollectionWrappers)
+        {
+            final JsonArray songCollectionWrapper = parser.parse(
+                    new StringReader(songCollectionWrapperJson))
+                    .getAsJsonArray();
+
+            // the song collection is the first element of the "wrapper"
+            final JsonArray songCollection = songCollectionWrapper.get(0)
+                    .getAsJsonArray();
+
+            // each element of the songCollection is an array of song values
+            for (final JsonElement songValues : songCollection)
+            {
+                // retrieve the songValues as an Array for parsing to a Song
+                // object
+                final JsonArray values = songValues.getAsJsonArray();
+
+                final Song s = new Song();
+                s.setId(gson.fromJson(values.get(0), String.class));
+                s.setTitle(gson.fromJson(values.get(1), String.class));
+                s.setName(gson.fromJson(values.get(1), String.class));
+                if (!Strings.isNullOrEmpty(gson.fromJson(values.get(2),
+                        String.class)))
+                {
+                    s.setAlbumArtUrl("https:"
+                            + gson.fromJson(values.get(2), String.class));
+                }
+                s.setArtist(gson.fromJson(values.get(3), String.class));
+                s.setAlbum(gson.fromJson(values.get(4), String.class));
+                s.setAlbumArtist(gson.fromJson(values.get(5), String.class));
+                s.setGenre(gson.fromJson(values.get(11), String.class));
+                s.setDurationMillis(gson.fromJson(values.get(13), Long.class));
+                s.setType(gson.fromJson(values.get(16), Integer.class));
+                s.setYear(gson.fromJson(values.get(18), Integer.class));
+                s.setPlaycount(gson.fromJson(values.get(22), Integer.class));
+                s.setRating(gson.fromJson(values.get(23), String.class));
+                if (!Strings.isNullOrEmpty(gson.fromJson(values.get(24),
+                        String.class)))
+                {
+                    s.setCreationDate(gson.fromJson(values.get(24), Float.class) / 1000);
+                }
+                if (!Strings.isNullOrEmpty(gson.fromJson(values.get(36),
+                        String.class)))
+                {
+                    s.setUrl("https:"
+                            + gson.fromJson(values.get(36), String.class));
+                }
+
+                chunkedCollection.add(s);
+            }
+        }
+
+        return chunkedCollection;
     }
 
     @Override
@@ -177,83 +248,6 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
         builder.close();
         return client.dispatchPost(new URI(
                 HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADPLAYLIST), builder);
-    }
-
-    private final Collection<Song> getSongs(final String continuationToken)
-            throws IOException, URISyntaxException
-    {
-        final Collection<Song> chunkedCollection = new ArrayList<Song>();
-
-        // Map<String, String> fields = new HashMap<String, String>();
-        // fields.put("json", "{\"continuationToken\":\"" + continuationToken +
-        // "\"}");
-
-        final FormBuilder form = new FormBuilder();
-        // form.addFields(fields);
-        form.close();
-
-        final String response = client.dispatchPost(new URI(
-                HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS), form);
-
-        // extract the JSON from the response
-        final List<String> jsSongCollectionWrappers = getJsSongCollectionWrappers(response);
-
-        final Gson gson = new Gson();
-        final JsonParser parser = new JsonParser();
-
-        for (final String songCollectionWrapperJson : jsSongCollectionWrappers)
-        {
-            final JsonArray songCollectionWrapper = parser.parse(
-                    new StringReader(songCollectionWrapperJson))
-                    .getAsJsonArray();
-
-            // the song collection is the first element of the "wrapper"
-            final JsonArray songCollection = songCollectionWrapper.get(0)
-                    .getAsJsonArray();
-
-            // each element of the songCollection is an array of song values
-            for (final JsonElement songValues : songCollection)
-            {
-                // retrieve the songValues as an Array for parsing to a Song
-                // object
-                final JsonArray values = songValues.getAsJsonArray();
-
-                final Song s = new Song();
-                s.setId(gson.fromJson(values.get(0), String.class));
-                s.setTitle(gson.fromJson(values.get(1), String.class));
-                s.setName(gson.fromJson(values.get(1), String.class));
-                if (!Strings.isNullOrEmpty(gson.fromJson(values.get(2),
-                        String.class)))
-                {
-                    s.setAlbumArtUrl("https:"
-                            + gson.fromJson(values.get(2), String.class));
-                }
-                s.setArtist(gson.fromJson(values.get(3), String.class));
-                s.setAlbum(gson.fromJson(values.get(4), String.class));
-                s.setAlbumArtist(gson.fromJson(values.get(5), String.class));
-                s.setGenre(gson.fromJson(values.get(11), String.class));
-                s.setDurationMillis(gson.fromJson(values.get(13), Long.class));
-                s.setType(gson.fromJson(values.get(16), Integer.class));
-                s.setYear(gson.fromJson(values.get(18), Integer.class));
-                s.setPlaycount(gson.fromJson(values.get(22), Integer.class));
-                s.setRating(gson.fromJson(values.get(23), String.class));
-                if (!Strings.isNullOrEmpty(gson.fromJson(values.get(24),
-                        String.class)))
-                {
-                    s.setCreationDate(gson.fromJson(values.get(24), Float.class) / 1000);
-                }
-                if (!Strings.isNullOrEmpty(gson.fromJson(values.get(36),
-                        String.class)))
-                {
-                    s.setUrl("https:"
-                            + gson.fromJson(values.get(36), String.class));
-                }
-
-                chunkedCollection.add(s);
-            }
-        }
-
-        return chunkedCollection;
     }
 
     /**
