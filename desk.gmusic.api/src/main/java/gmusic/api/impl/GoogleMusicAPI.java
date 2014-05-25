@@ -27,17 +27,25 @@ import gmusic.model.Tune;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import com.google.common.base.Strings;
 import com.google.common.io.Files;
 import com.google.common.io.Resources;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 public class GoogleMusicAPI implements IGoogleMusicAPI
 {
@@ -157,78 +165,83 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
 		form.close();
 
 		String response = client.dispatchPost(new URI(HTTPS_PLAY_GOOGLE_COM_MUSIC_SERVICES_LOADALLTRACKS), form);
-		int start = response.indexOf("([[") + 4;
-		int end = response.indexOf("window.parent['slat_progress'](1.0);");
-		response = response.substring(start, end);
-		String[] responses = response.split("\\]\\r?\\n,\\[");
 
-		for(String r : responses)
+		// extract the JSON from the response
+		List<String> jsSongCollectionWrappers = getJsSongCollectionWrappers(response);
+
+		Gson gson = new Gson();
+		JsonParser parser = new JsonParser();
+
+		for (String songCollectionWrapperJson : jsSongCollectionWrappers)
 		{
-			String[] values = splitNotInQuotes(r);
+			JsonArray songCollectionWrapper = parser.parse(new StringReader(songCollectionWrapperJson)).getAsJsonArray();
 
-			Song s = new Song();
-			s.setId(values[0]);
-			s.setTitle(values[1]);
-			s.setName(values[1]);
-			if(!Strings.isNullOrEmpty(values[2]))
-			{
-				s.setAlbumArtUrl("https:" + values[2]);
-			}
-			s.setArtist(values[3]);
-			s.setAlbum(values[4]);
-			s.setAlbumArtist(values[5]);
-			s.setGenre(values[11]);
-			s.setDurationMillis(toLong(values[13]));
-			s.setType(toInt(values[16]));
-			s.setYear(toInt(values[18]));
-			s.setPlaycount(toInt(values[22]));
-			s.setRating(values[23]);
-			if(!Strings.isNullOrEmpty(values[24]))
-			{
-				s.setCreationDate(Float.valueOf(values[24]) / 1000);
-			}
-			if(!Strings.isNullOrEmpty(values[36]))
-			{
-				s.setUrl("https:" + values[36]);
-			}
+			// the song collection is the first element of the "wrapper"
+			JsonArray songCollection = songCollectionWrapper.get(0).getAsJsonArray();
 
-			chunkedCollection.add(s);
+			// each element of the songCollection is an array of song values
+			for (JsonElement songValues : songCollection)
+			{
+				// retrieve the songValues as an Array for parsing to a Song object
+				JsonArray values = songValues.getAsJsonArray();
+
+				Song s = new Song();
+				s.setId(gson.fromJson(values.get(0), String.class));
+				s.setTitle(gson.fromJson(values.get(1), String.class));
+				s.setName(gson.fromJson(values.get(1), String.class));
+				if (!Strings.isNullOrEmpty(gson.fromJson(values.get(2), String.class)))
+				{
+					s.setAlbumArtUrl("https:" + gson.fromJson(values.get(2), String.class));
+				}
+				s.setArtist(gson.fromJson(values.get(3), String.class));
+				s.setAlbum(gson.fromJson(values.get(4), String.class));
+				s.setAlbumArtist(gson.fromJson(values.get(5), String.class));
+				s.setGenre(gson.fromJson(values.get(11), String.class));
+				s.setDurationMillis(gson.fromJson(values.get(13), Long.class));
+				s.setType(gson.fromJson(values.get(16), Integer.class));
+				s.setYear(gson.fromJson(values.get(18), Integer.class));
+				s.setPlaycount(gson.fromJson(values.get(22), Integer.class));
+				s.setRating(gson.fromJson(values.get(23), String.class));
+				if (!Strings.isNullOrEmpty(gson.fromJson(values.get(24), String.class)))
+				{
+					s.setCreationDate(gson.fromJson(values.get(24), Float.class) / 1000);
+				}
+				if (!Strings.isNullOrEmpty(gson.fromJson(values.get(36), String.class)))
+				{
+					s.setUrl("https:" + gson.fromJson(values.get(36), String.class));
+				}
+
+				chunkedCollection.add(s);
+			}
 		}
 
 		return chunkedCollection;
 	}
 
-	private String[] splitNotInQuotes(String r)
+	/**
+	 * Locate each "window.parent['slat_process']" statement and extract the JSON representing a song
+	 * collection. For a provided response, there may be one or more separate song collections.
+	 * 
+	 * @param response
+	 *           the HTML response from LOADALLTRACKS
+	 * @return a "wrapper" JSON object with a list of song collection JSON objects as its first
+	 *         element
+	 */
+	private List<String> getJsSongCollectionWrappers(String response)
 	{
-		return r.replace("\"", "").split(",");
-	}
+		List<String> songCollectionList = new ArrayList<String>();
 
-	private int toInt(String str)
-	{
-		int retInt;
-		try
+		// locate the contents of: window.parent['slat_process']( );
+		// where the song collection JSON is between the parentheses
+		Pattern p = Pattern.compile("window.parent\\['slat_process'\\]\\((.*?)\\);", Pattern.DOTALL);
+		Matcher m = p.matcher(response);
+		while (m.find())
 		{
-			retInt = Integer.valueOf(str);
+			String songCollectionWrapperJson = m.group(1);
+			songCollectionList.add(songCollectionWrapperJson);
 		}
-		catch(NumberFormatException e)
-		{
-			retInt = 0;
-		}
-		return retInt;
-	}
 
-	private long toLong(String str)
-	{
-		long retLong;
-		try
-		{
-			retLong = Long.valueOf(str);
-		}
-		catch(NumberFormatException e)
-		{
-			retLong = 0;
-		}
-		return retLong;
+		return songCollectionList;
 	}
 
 	@Override
