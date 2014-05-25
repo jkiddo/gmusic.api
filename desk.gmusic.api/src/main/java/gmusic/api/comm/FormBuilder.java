@@ -17,67 +17,72 @@ import java.util.Map;
 
 public class FormBuilder
 {
-	private final String boundary = "----------" + String.format("%x", new Date().getTime());
-	private String contentType = "multipart/form-data; boundary=" + boundary;
+    private final String boundary = "----------"
+            + String.format("%x", new Date().getTime());
+    private String contentType = "multipart/form-data; boundary=" + boundary;
 
-	private final ByteArrayOutputStream outputStream;
+    private final ByteArrayOutputStream outputStream;
 
-	public final static FormBuilder getEmpty() throws IOException
-	{
-		final FormBuilder b = new FormBuilder();
-		b.close();
-		return b;
-	}
+    public final static FormBuilder getEmpty() throws IOException
+    {
+        final FormBuilder b = new FormBuilder();
+        b.close();
+        return b;
+    }
 
-	public final String getContentType()
-	{
-		return contentType;
-	}
+    public final String getContentType()
+    {
+        return contentType;
+    }
 
-	public FormBuilder()
-	{
-		outputStream = new ByteArrayOutputStream();
-	}
+    public FormBuilder()
+    {
+        outputStream = new ByteArrayOutputStream();
+    }
 
-	public final void addFields(Map<String, String> fields) throws IOException
-	{
-		for(Map.Entry<String, String> key : fields.entrySet())
-		{
-			addField(key.getKey(), key.getValue());
-		}
-	}
+    public final void addFields(Map<String, String> fields) throws IOException
+    {
+        for (Map.Entry<String, String> key : fields.entrySet())
+        {
+            addField(key.getKey(), key.getValue());
+        }
+    }
 
-	private final void addField(String key, String value) throws IOException
-	{
-		StringBuilder sb = new StringBuilder();
+    private final void addField(String key, String value) throws IOException
+    {
+        StringBuilder sb = new StringBuilder();
 
-		sb.append(String.format("\r\n--%1$s\r\n", boundary));
-		sb.append("Content-Disposition: form-data;");
-		sb.append(String.format("name=\"%1$s\";\r\n\r\n%2$s", key, value));
+        sb.append(String.format("\r\n--%1$s\r\n", boundary));
+        sb.append("Content-Disposition: form-data;");
+        sb.append(String.format("name=\"%1$s\";\r\n\r\n%2$s", key, value));
 
-		outputStream.write(sb.toString().getBytes());
-	}
+        outputStream.write(sb.toString().getBytes());
+    }
 
-	public final void addFile(String name, String fileName, byte[] file) throws IOException
-	{
-		StringBuilder sb = new StringBuilder();
+    public final void addFile(String name, String fileName, byte[] file)
+            throws IOException
+    {
+        StringBuilder sb = new StringBuilder();
 
-		sb.append(String.format("\r\n--%1$s\r\n", boundary));
-		sb.append(String.format("Content-Disposition: form-data; name=\"%1$s\"; filename=\"%2$s\"\r\n", name, fileName));
+        sb.append(String.format("\r\n--%1$s\r\n", boundary));
+        sb.append(String
+                .format("Content-Disposition: form-data; name=\"%1$s\"; filename=\"%2$s\"\r\n",
+                        name, fileName));
 
-		sb.append(String.format("Content-Type: %1$s\r\n\r\n", "application/octet-stream"));
+        sb.append(String.format("Content-Type: %1$s\r\n\r\n",
+                "application/octet-stream"));
 
-		outputStream.write(sb.toString().getBytes());
-		outputStream.write(file, 0, file.length);
-	}
+        outputStream.write(sb.toString().getBytes());
+        outputStream.write(file, 0, file.length);
+    }
 
-	public final void close() throws IOException
-	{
-		outputStream.write(("\r\n--" + boundary + "--\r\n").getBytes());
-	}
+    public final void close() throws IOException
+    {
+        outputStream.write(("\r\n--" + boundary + "--\r\n").getBytes());
+    }
 
-	public final byte[] getBytes()
-	{
-		return outputStream.toByteArray();
-	}
+    public final byte[] getBytes()
+    {
+        return outputStream.toByteArray();
+    }
 }
