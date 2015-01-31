@@ -267,7 +267,7 @@ public class GoogleMusicAPI implements IGoogleMusicAPI
         // locate the contents of: window.parent['slat_process']( );
         // where the song collection JSON is between the parentheses
         final Pattern p = Pattern
-                .compile("window.parent\\['slat_process'\\]\\((.*?)\\);",
+        		.compile("window.parent\\['slat_process'\\]\\((.*?)\n\\);",
                         Pattern.DOTALL);
         final Matcher m = p.matcher(response);
         while (m.find())
