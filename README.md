@@ -1,5 +1,7 @@
 #gmusic.api: an unofficial Java API for Google Play Music
 
+This project needs help! I currently have way to little time to maintain this my self so ANY help would be appreciated!
+
 The project is not supported nor endorsed by Google. 
 
 **Respect Google in your use of the API**. Use common sense (protocol compliance, reasonable load, etc) and don't ruin the fun for everyone else.
