@@ -19,7 +19,7 @@ This project is a port of [(Simon Weber's great work)](https://github.com/simon-
 
 The api currently only implement read methods (get and retrieval) but more methods could be implemented in time either by me or you:)
 
-This project is licensed under GNU GPL, Version 3.
+This project is dual licensed under GNU GPL, Version 3 and MIT.
 
 Copyright 2012
 [Jens Kristian Villadsen] (http://www.genuswillehadus.net).
