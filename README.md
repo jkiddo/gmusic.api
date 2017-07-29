@@ -1,3 +1,5 @@
+## PROJECT IS DEPREACTED
+
 #gmusic.api: an unofficial Java API for Google Play Music
 
 This project needs help! I currently have way to little time to maintain this my self so ANY help would be appreciated!
