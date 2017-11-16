@@ -1,4 +1,4 @@
-## PROJECT IS DEPREACTED
+## PROJECT IS DEPREACTED look at https://github.com/FelixGail/gplaymusic instead
 
 #gmusic.api: an unofficial Java API for Google Play Music
 
